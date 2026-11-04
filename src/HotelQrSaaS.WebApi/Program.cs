@@ -158,7 +158,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hotel QR SaaS API v1");
-    c.RoutePrefix = "swagger"; // Swagger UI at /swagger
+    c.RoutePrefix = string.Empty; // Swagger UI directly at root: http://localhost:5055/
 });
 
 app.UseCors("AllowAll");
