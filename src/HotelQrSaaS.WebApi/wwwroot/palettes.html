@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel QR SaaS — 20 Fərqli Rəng Palitrası Laboratoriyası</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .smooth-transition { transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+  </style>
+</head>
+<body class="bg-transparent text-[var(--foreground)] antialiased p-3 sm:p-6">
+
+  <div class="max-w-6xl mx-auto bg-[var(--card)] border border-[var(--border)] rounded-3xl p-5 sm:p-8 shadow-2xl">
+    
+    <!-- Top Header -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-[var(--border)]">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30 mb-2">
+          <span>🎨</span> 20 Müxtəlif Otel & Kurort Rəng Konsepsiyası
+        </div>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--foreground)]">
+          Otel QR SaaS — Rəng Palitrası Laboratoriyası
+        </h1>
+        <p class="text-xs sm:text-sm text-[var(--muted-foreground)] mt-1">
+          Aşağıdakı 20 fərqli rəng kombinasiyasından birini seçin, sağdakı canlı mobil ekranda dərhal necə göründüyünü test edin.
+        </p>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex flex-wrap items-center gap-1.5 p-1 bg-black/40 rounded-2xl border border-[var(--border)] text-xs">
+        <button onclick="filterCategory('all')" id="tab-all" class="px-3 py-1.5 rounded-xl font-bold bg-blue-600 text-white transition">Hamısı (20)</button>
+        <button onclick="filterCategory('luxury')" id="tab-luxury" class="px-3 py-1.5 rounded-xl text-[var(--muted-foreground)] hover:text-white transition">Lüks & Saray</button>
+        <button onclick="filterCategory('beach')" id="tab-beach" class="px-3 py-1.5 rounded-xl text-[var(--muted-foreground)] hover:text-white transition">Resort & Çimərlik</button>
+        <button onclick="filterCategory('nature')" id="tab-nature" class="px-3 py-1.5 rounded-xl text-[var(--muted-foreground)] hover:text-white transition">Təbiət & Spa</button>
+        <button onclick="filterCategory('urban')" id="tab-urban" class="px-3 py-1.5 rounded-xl text-[var(--muted-foreground)] hover:text-white transition">Modern & Şəhər</button>
+      </div>
+    </div>
+
+    <!-- Main Workspace Grid: Left Palette Grid & Info (7 cols), Right Sticky Phone Mockup (5 cols) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6 items-start">
+      
+      <!-- LEFT: 20 Clickable Palette Cards & Tokens (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <!-- Active Palette Info Card -->
+        <div id="activePaletteInfoCard" class="p-5 rounded-2xl border smooth-transition bg-[#090D16] border-[#D4AF37]/40 text-white shadow-lg">
+          <div class="flex items-center justify-between">
+            <span id="activeTag" class="text-[11px] uppercase tracking-wider font-extrabold px-2.5 py-0.5 rounded-md bg-[#D4AF37]/20 text-[#F5D061] border border-[#D4AF37]/30">
+              5 Ulduz Ultra-Lüks
+            </span>
+            <span id="activeHotelType" class="text-xs font-semibold text-slate-300">Ritz-Carlton & Four Seasons Stili</span>
+          </div>
+
+          <div class="flex items-center gap-3 mt-3">
+            <div id="activeColorDot" class="w-6 h-6 rounded-full border-2 border-white/20 shadow-md flex-shrink-0" style="background-color: #D4AF37;"></div>
+            <h3 id="activeTitle" class="text-lg font-bold text-white">1. Midnight Obsidian & Champagne Gold</h3>
+          </div>
+
+          <p id="activeDesc" class="text-xs text-slate-300 mt-2 leading-relaxed">
+            Dərin gecə obsidian qara fonu və parlaq şampan qızılı vurğuları. Restoran masasında və gecə otaqda gözü heç yormur, mobil ekranlarda zəngin və mötəbər hissi verir.
+          </p>
+
+          <!-- 4 Main Swatches of Active Palette -->
+          <div class="grid grid-cols-4 gap-2 mt-4 pt-4 border-t border-white/10 text-center">
+            <div class="p-2 rounded-xl bg-black/40 border border-white/5">
+              <div id="swBg" class="w-full h-7 rounded-lg mb-1 border border-white/10" style="background-color: #090D16;"></div>
+              <div class="text-[10px] text-slate-400">Fon (60%)</div>
+              <div id="swBgHex" class="text-[10px] font-mono font-bold text-white">#090D16</div>
+            </div>
+            <div class="p-2 rounded-xl bg-black/40 border border-white/5">
+              <div id="swCard" class="w-full h-7 rounded-lg mb-1 border border-white/10" style="background-color: #141C2B;"></div>
+              <div class="text-[10px] text-slate-400">Kartlar (30%)</div>
+              <div id="swCardHex" class="text-[10px] font-mono font-bold text-white">#141C2B</div>
+            </div>
+            <div class="p-2 rounded-xl bg-black/40 border border-white/5">
+              <div id="swAccent" class="w-full h-7 rounded-lg mb-1 border border-white/10" style="background-color: #D4AF37;"></div>
+              <div class="text-[10px] text-slate-400">Aksent (10%)</div>
+              <div id="swAccentHex" class="text-[10px] font-mono font-bold text-white">#D4AF37</div>
+            </div>
+            <div class="p-2 rounded-xl bg-black/40 border border-white/5">
+              <div id="swSub" class="w-full h-7 rounded-lg mb-1 border border-white/10" style="background-color: #94A3B8;"></div>
+              <div class="text-[10px] text-slate-400">Mətn / Detal</div>
+              <div id="swSubHex" class="text-[10px] font-mono font-bold text-white">#94A3B8</div>
+            </div>
+          </div>
+
+          <!-- Quick Copy CSS Token -->
+          <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+            <span class="text-slate-400 font-mono text-[11px]" id="cssSnippetText">--color-primary: #D4AF37; --bg-main: #090D16;</span>
+            <button onclick="copyCurrentCss()" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium text-[11px] transition flex items-center gap-1.5">
+              <span id="copyBtnIcon">📋</span> <span id="copyBtnText">Kodu Kopyala</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 20 Palettes Selection Grid -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
+              20 Palitradan Birini Seçin (Klikləyin):
+            </h4>
+            <span class="text-xs text-[var(--muted-foreground)]" id="paletteCountLabel">20 mövcuddur</span>
+          </div>
+
+          <div id="palettesContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-1 hide-scrollbar">
+            <!-- Dynamic Cards generated by JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Sticky Realistic Mobile Phone Preview (5 cols) -->
+      <div class="lg:col-span-5 flex flex-col items-center sticky top-6">
+        
+        <div class="text-xs font-semibold text-[var(--muted-foreground)] mb-2 flex items-center gap-1.5">
+          <span>📱</span> Qonaq Ekranında Canlı Görünüş:
+        </div>
+
+        <!-- Phone Device Frame -->
+        <div id="phoneDevice" class="w-[310px] sm:w-[335px] rounded-[44px] p-3 shadow-2xl smooth-transition border-4 border-[#334155]/60 bg-[#1e293b]" style="box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.75);">
+          
+          <!-- Inner Screen -->
+          <div id="phoneScreen" class="w-full rounded-[36px] overflow-hidden smooth-transition relative text-white pb-6" style="background-color: #090D16; min-height: 590px;">
+            
+            <!-- Dynamic Island -->
+            <div class="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-4 bg-black rounded-full z-30 flex items-center justify-center">
+              <div class="w-2.5 h-2.5 rounded-full bg-[#111827] ml-auto mr-1.5"></div>
+            </div>
+
+            <!-- Top Cover Banner -->
+            <div class="relative h-32 w-full overflow-hidden">
+              <div id="phoneBannerImg" class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80');"></div>
+              <div id="phoneBannerFade" class="absolute inset-0 smooth-transition" style="background: linear-gradient(to top, #090D16, rgba(0,0,0,0.4), rgba(0,0,0,0.2));"></div>
+              
+              <!-- Lang Switcher in Phone -->
+              <div class="absolute top-7 right-3.5 z-20 flex bg-black/60 backdrop-blur-md rounded-full p-0.5 border border-white/20 text-[9px] font-bold">
+                <span id="phoneLangBtn" class="px-2 py-0.5 rounded-full font-bold text-black" style="background-color: #D4AF37;">AZ</span>
+                <span class="px-1.5 py-0.5 text-slate-400">EN</span>
+                <span class="px-1.5 py-0.5 text-slate-400">RU</span>
+              </div>
+            </div>
+
+            <!-- Hotel Profile Info -->
+            <div class="px-4 -mt-10 relative z-10 flex items-end gap-3">
+              <div class="w-16 h-16 rounded-2xl border-2 border-white/20 shadow-xl overflow-hidden bg-slate-900 flex-shrink-0">
+                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=200&q=80" alt="Hotel Logo" class="w-full h-full object-cover">
+              </div>
+              <div class="pb-1">
+                <h4 id="phoneHotelName" class="text-sm font-bold flex items-center gap-1.5 text-white">
+                  Grand Palace & Spa
+                  <svg id="phoneVerifiedBadge" class="w-3.5 h-3.5 smooth-transition" style="color: #D4AF37;" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                  </svg>
+                </h4>
+                <p id="phoneHotelSub" class="text-[10px] text-slate-400">Lüks Qonaqpərvərlik & Kurort</p>
+              </div>
+            </div>
+
+            <!-- Quick Direct Contact Row -->
+            <div class="px-4 mt-3 grid grid-cols-4 gap-1.5 text-center">
+              <div class="py-2 rounded-xl bg-white/5 border border-white/5 flex flex-col items-center">
+                <span class="text-xs">📞</span>
+                <span class="text-[9px] text-slate-300 mt-1">Zəng</span>
+              </div>
+              <div class="py-2 rounded-xl bg-white/5 border border-white/5 flex flex-col items-center">
+                <span class="text-xs text-emerald-400">💬</span>
+                <span class="text-[9px] text-slate-300 mt-1">WhatsApp</span>
+              </div>
+              <div class="py-2 rounded-xl bg-white/5 border border-white/5 flex flex-col items-center">
+                <span class="text-xs text-sky-400">✈️</span>
+                <span class="text-[9px] text-slate-300 mt-1">Telegram</span>
+              </div>
+              <div class="py-2 rounded-xl bg-white/5 border border-white/5 flex flex-col items-center">
+                <span class="text-xs text-amber-400">📍</span>
+                <span class="text-[9px] text-slate-300 mt-1">Xəritə</span>
+              </div>
+            </div>
+
+            <!-- Primary Action Button: Room Service -->
+            <div class="px-4 mt-3">
+              <button id="phoneActionBtn" class="w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 smooth-transition active:scale-95 shadow-lg" style="background-color: #D4AF37; color: #000000;">
+                <span>🛎️</span> Otaq Xidməti & Əlaqə
+              </button>
+            </div>
+
+            <!-- Category Section 1: Services List -->
+            <div class="px-4 mt-4">
+              <div class="flex items-center justify-between mb-2">
+                <span id="phoneSectionTitle" class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Xidmətlər & Menyu</span>
+                <span class="text-[9px] text-slate-500">2 bölmə</span>
+              </div>
+
+              <div class="space-y-2">
+                <!-- Service Link 1 -->
+                <div id="phoneCard1" class="p-2.5 rounded-xl border smooth-transition flex items-center justify-between" style="background-color: #141C2B; border-color: rgba(255,255,255,0.08);">
+                  <div class="flex items-center gap-2.5">
+                    <div id="phoneIconBox1" class="w-8 h-8 rounded-lg flex items-center justify-center text-sm smooth-transition" style="background-color: rgba(212, 175, 55, 0.15); color: #D4AF37;">
+                      🛏️
+                    </div>
+                    <div>
+                      <div id="phoneCard1Title" class="text-xs font-semibold text-white">Otaq növləri & Qiymətlər</div>
+                      <div id="phoneCard1Sub" class="text-[9px] text-slate-400">Deluxe, Junior Suite, Villa</div>
+                    </div>
+                  </div>
+                  <span id="phoneChevron1" class="text-xs font-bold smooth-transition" style="color: #D4AF37;">❯</span>
+                </div>
+
+                <!-- Service Link 2 -->
+                <div id="phoneCard2" class="p-2.5 rounded-xl border smooth-transition flex items-center justify-between" style="background-color: #141C2B; border-color: rgba(255,255,255,0.08);">
+                  <div class="flex items-center gap-2.5">
+                    <div id="phoneIconBox2" class="w-8 h-8 rounded-lg flex items-center justify-center text-sm smooth-transition" style="background-color: rgba(212, 175, 55, 0.15); color: #D4AF37;">
+                      🍽️
+                    </div>
+                    <div>
+                      <div id="phoneCard2Title" class="text-xs font-semibold text-white">Restoran & A La Carte Menyu</div>
+                      <div id="phoneCard2Sub" class="text-[9px] text-slate-400">Şefin Xüsusi Təamları</div>
+                    </div>
+                  </div>
+                  <span id="phoneChevron2" class="text-xs font-bold smooth-transition" style="color: #D4AF37;">❯</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity Event Card -->
+            <div class="px-4 mt-3">
+              <div id="phoneActivityCard" class="p-2.5 rounded-xl border flex items-center gap-2.5 smooth-transition" style="background-color: rgba(0,0,0,0.4); border-color: rgba(212, 175, 55, 0.3);">
+                <div id="phoneActivityIcon" class="w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0" style="background-color: rgba(212, 175, 55, 0.2); color: #D4AF37;">
+                  🏊
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between">
+                    <span id="phoneActivityTitle" class="text-xs font-bold truncate text-white">Hovuz Partisi & DJ</span>
+                    <span class="text-[9px] font-mono text-slate-400">15:00</span>
+                  </div>
+                  <div class="text-[9px] text-slate-400 truncate">Açıq Hovuz Kənarı • Canlı Proqram</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer Badge -->
+            <div class="text-center mt-5 text-[9px] text-slate-500">
+              Powered by <span class="font-bold text-slate-400">Hotel QR Platform</span>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // 20 Distinct Real-World Palettes
+    const palettes = [
+      {
+        id: 1,
+        category: 'luxury',
+        name: "1. Midnight & Champagne Gold",
+        hotelType: "Ritz-Carlton, Four Seasons Stili",
+        tag: "5 Ulduz Ultra-Lüks",
+        bg: "#090D16",
+        card: "#141C2B",
+        accent: "#D4AF37",
+        accentText: "#000000",
+        sub: "#94A3B8",
+        desc: "Klassik 5 ulduzlu otellərin qızıl standartı. Dərin obsidian qara fon və şampan qızılı düymələr gecə və otaq şəraitində ən yüksək status hissi bəxş edir."
+      },
+      {
+        id: 2,
+        category: 'luxury',
+        name: "2. Royal Emerald & Gold",
+        hotelType: "Osmanlı Saray & Heritage Otellər",
+        tag: "Klassik Saray",
+        bg: "#061A14",
+        card: "#0D2B22",
+        accent: "#10B981",
+        accentText: "#000000",
+        sub: "#A7F3D0",
+        desc: "Zümrüd yaşılı və qızıl birləşməsi. Tarixi saraylar, lüks iqamətgahlar və monarxiya mövzulu butik otellər üçün əvəzedilməz seçimdir."
+      },
+      {
+        id: 3,
+        category: 'beach',
+        name: "3. Aegean Navy & Electric Sapphire",
+        hotelType: "Bodrum & Antalya Resortları",
+        tag: "Dənizkənarı Resort",
+        bg: "#0B132B",
+        card: "#1C2541",
+        accent: "#2563EB",
+        accentText: "#FFFFFF",
+        sub: "#93C5FD",
+        desc: "Egey və Aralıq dənizinin dərin sularını xatırladan kobalt göy və canlı safir mavisi. Yay istirahəti və ailəvi kurortlar üçün ən populyar üslub."
+      },
+      {
+        id: 4,
+        category: 'luxury',
+        name: "4. Bordeaux Crimson & Rose Gold",
+        hotelType: "Şərab İqamətgahı & Romantik Butik",
+        tag: "Şərab & Romantika",
+        bg: "#16070B",
+        card: "#270F16",
+        accent: "#E11D48",
+        accentText: "#FFFFFF",
+        sub: "#FDA4AF",
+        desc: "Tünd bordo şərab rəngi və çəhrayı qızıl. Romantik cütlük tətilləri, qastronomiya və şərab turları təşkil edən otellər üçün mükəmməldir."
+      },
+      {
+        id: 5,
+        category: 'nature',
+        name: "5. Tuscan Olive & Terracotta",
+        hotelType: "İtalyan Aqroturizm & Eco-Villa",
+        tag: "Eko & Təbiət",
+        bg: "#12160E",
+        card: "#1F2619",
+        accent: "#EA580C",
+        accentText: "#FFFFFF",
+        sub: "#BEF264",
+        desc: "Toskana zeytun bağları və bişmiş gil (terrakotta) rəngləri. Təbiət qoynunda istirahət edən qonaqlar üçün rahatladıcı və təbii hissiyat."
+      },
+      {
+        id: 6,
+        category: 'nature',
+        name: "6. Kyoto Bamboo & Matcha Zen",
+        hotelType: "Yapon Ryokan & Spa Mərkəzi",
+        tag: "Zen Wellness & Spa",
+        bg: "#0B140E",
+        card: "#15241B",
+        accent: "#22C55E",
+        accentText: "#000000",
+        sub: "#86EFAC",
+        desc: "Matça çayı və bambuk meşəsi tonları. Bədən və ruh sağlamlığı (detox, yoqa, spa) otellərində qonağa daxili hüzur və sakitlik bəxş edir."
+      },
+      {
+        id: 7,
+        category: 'urban',
+        name: "7. Monaco Obsidian & Platinum",
+        hotelType: "Monako VIP & Minimalist Kazino",
+        tag: "Ultra Minimalist",
+        bg: "#050505",
+        card: "#18181B",
+        accent: "#F8FAFC",
+        accentText: "#000000",
+        sub: "#A1A1AA",
+        desc: "Təmiz qara və parıldayan platin gümüş. Lüzumsuz heç bir rəng olmadan ən yüksək dərəcədə təmkinli, modern və elitar görünüş."
+      },
+      {
+        id: 8,
+        category: 'beach',
+        name: "8. Santorini Sunlit & Aegean Cobalt",
+        hotelType: "Yunan Adaları & Ağ Qayalıqlar",
+        tag: "Ağ Çimərlik Stili",
+        bg: "#0F172A",
+        card: "#1E293B",
+        accent: "#38BDF8",
+        accentText: "#000000",
+        sub: "#BAE6FD",
+        desc: "Santorini günəşi və dəniz mavisi. Parlaq mavi aksentlər ekranın hər guşəsində dəniz mehi və yay enerjisi saçır."
+      },
+      {
+        id: 9,
+        category: 'luxury',
+        name: "9. Sahara Sand & Golden Amber",
+        hotelType: "Dubay Səhra Glamping & Vaha",
+        tag: "Səhra Lüksü",
+        bg: "#171007",
+        card: "#291D10",
+        accent: "#F59E0B",
+        accentText: "#000000",
+        sub: "#FDE68A",
+        desc: "Səhra qumları və kəhrəba alovu. İsti, qonaqpərvər şərq lüksü, vaha və unikal glamping təcrübələri üçün idealdır."
+      },
+      {
+        id: 10,
+        category: 'nature',
+        name: "10. Nordic Fjord & Arctic Frost",
+        hotelType: "İsveç Dağ & Qış Xizək Şalesi",
+        tag: "Qış & Dağ Kurortu",
+        bg: "#0B1320",
+        card: "#16233B",
+        accent: "#67E8F9",
+        accentText: "#000000",
+        sub: "#CFFAFE",
+        desc: "Buzlu Şimal fyordları və qarlı dağlar. Şahdağ və ya Tufandağ kimi qış xizək kurortlarında möhtəşəm uyğunlaşan soyuq və təmiz mavi tonlar."
+      },
+      {
+        id: 11,
+        category: 'beach',
+        name: "11. Amalfi Lemon & Mediterranean Teal",
+        hotelType: "İtaliya Riviyerası Sahil Butiki",
+        tag: "Riviyera Günəşi",
+        bg: "#081A1D",
+        card: "#112F35",
+        accent: "#FACC15",
+        accentText: "#000000",
+        sub: "#5EEAD4",
+        desc: "Amalfi limonları və firuzəyi dəniz. Pozitiv, dinamik, canlandırıcı və qonaqların iştahasını açan yay menyusu palitrası."
+      },
+      {
+        id: 12,
+        category: 'urban',
+        name: "12. Velvet Plum & Midnight Violet",
+        hotelType: "Eksklüziv Şəhər Klubu & Lounge",
+        tag: "Gecə Lounge & Butik",
+        bg: "#140A1D",
+        card: "#251233",
+        accent: "#C084FC",
+        accentText: "#000000",
+        sub: "#F3E8FF",
+        desc: "Məxmər bənövşəyi və qara orxideya. Roof-top barları, kokteyl məkanları və müasir gecə həyatı otelləri üçün cazibədar seçim."
+      },
+      {
+        id: 13,
+        category: 'urban',
+        name: "13. Espresso Roast & Industrial Bronze",
+        hotelType: "İş Adamları & Loft Otel",
+        tag: "Executive & Business",
+        bg: "#140F0A",
+        card: "#241B13",
+        accent: "#D97706",
+        accentText: "#FFFFFF",
+        sub: "#FDE68A",
+        desc: "Tünd espresso qəhvəsi və bürünc metal. Mərkəzi biznes otelləri və işgüzar səfərlər üçün ciddi, peşəkar və yetkin abu-hava."
+      },
+      {
+        id: 14,
+        category: 'nature',
+        name: "14. Bali Rainforest & Teakwood",
+        hotelType: "Ubud Cəngəllik Villası",
+        tag: "Tropik Villa",
+        bg: "#0C1510",
+        card: "#17271E",
+        accent: "#84CC16",
+        accentText: "#000000",
+        sub: "#D9F99D",
+        desc: "Bali tropik meşələri və təbii tik ağacı. Səs-küydən uzaq, hovuzlu villalar və ekoturizm məkanları üçün təravətləndirici rənglər."
+      },
+      {
+        id: 15,
+        category: 'nature',
+        name: "15. Provence Lavender & Soft Lilac",
+        hotelType: "Fransız Şatosu & Zərif Spa",
+        tag: "Zərif Fransız Spası",
+        bg: "#12101C",
+        card: "#211E30",
+        accent: "#A78BFA",
+        accentText: "#000000",
+        sub: "#DDD6FE",
+        desc: "Provans lavanda tarlaları və zərif kəşmir. Qadın qonaqların və spa həvəskarlarının zövqünü oxşayan sakitləşdirici tonlar."
+      },
+      {
+        id: 16,
+        category: 'urban',
+        name: "16. Neo Cyberpunk & Cyan Glow",
+        hotelType: "Tokio Kapsul & Gələcək Texnoloji Stay",
+        tag: "Gələcəyin Tech Oteli",
+        bg: "#0A0B14",
+        card: "#151728",
+        accent: "#06B6D4",
+        accentText: "#000000",
+        sub: "#F43F5E",
+        desc: "Kiber-texnologiya, neon mavi və çəhrayı şüalar. Gənc nəsil, rəqəmsal köçərilər (digital nomads) və müasir smart otellər üçün cəsarətli üslub."
+      },
+      {
+        id: 17,
+        category: 'luxury',
+        name: "17. English Manor & Dusty Rose",
+        hotelType: "Klassik İngilis Qəsri & Park Stay",
+        tag: "Britaniya Zadəganlığı",
+        bg: "#161114",
+        card: "#291E24",
+        accent: "#FB7185",
+        accentText: "#000000",
+        sub: "#FECDD3",
+        desc: "İngilis qızılgülü və zərif palıd mebeli. Qədimlik, çay süfrələri və zadəgan rahatlığı hissi aşılayır."
+      },
+      {
+        id: 18,
+        category: 'luxury',
+        name: "18. Moroccan Saffron & Majorelle Blue",
+        hotelType: "Marrakech Riad & Şərq Sarayı",
+        tag: "Mərakeş Eksotikası",
+        bg: "#0B1122",
+        card: "#16203D",
+        accent: "#FBBF24",
+        accentText: "#000000",
+        sub: "#93C5FD",
+        desc: "İv Sen Loranın sevimli Majorrel mavisi və zəfəran sarısı. Unikal memarlıq və ekzotik səyahətlər üçün heyranedici kontrast."
+      },
+      {
+        id: 19,
+        category: 'nature',
+        name: "19. Swiss Alpine Pine & Amber Oak",
+        hotelType: "İsveçrə Şalesi & Dağ Gölləri",
+        tag: "Alp Dağ Evləri",
+        bg: "#0D1712",
+        card: "#182820",
+        accent: "#FB923C",
+        accentText: "#000000",
+        sub: "#86EFAC",
+        desc: "Qədim Alp şam ağacları və kamin odu. Dağlıq rayonlarda şöminə kənarında istirahət edən qonaqlar üçün ən isti palitra."
+      },
+      {
+        id: 20,
+        category: 'beach',
+        name: "20. Tulum Sunset & Terracotta Clay",
+        hotelType: "Tulum Bohem Çimərlik Klubu",
+        tag: "Bohem Qürub Çağı",
+        bg: "#180E0D",
+        card: "#2B1A18",
+        accent: "#F97316",
+        accentText: "#FFFFFF",
+        sub: "#FFEDD5",
+        desc: "Meksika Tulum sahillərində günbatan qızmar günəş. DJ partiləri, çimərlik kokteylləri və bohem gənclik üçün ən dəbli trend."
+      }
+    ];
+
+    let currentSelectedId = 1;
+    let currentCategory = 'all';
+
+    function renderPalettes() {
+      const container = document.getElementById('palettesContainer');
+      const filtered = currentCategory === 'all' 
+        ? palettes 
+        : palettes.filter(p => p.category === currentCategory);
+
+      document.getElementById('paletteCountLabel').innerText = `${filtered.length} variant göstərilir`;
+
+      container.innerHTML = filtered.map(p => {
+        const isSelected = p.id === currentSelectedId;
+        return `
+          <div onclick="selectPalette(${p.id})" class="p-3.5 rounded-2xl border cursor-pointer smooth-transition relative group ${isSelected ? 'border-2 border-white shadow-xl scale-[1.02]' : 'border-white/10 hover:border-white/30 bg-black/20 hover:bg-black/30'}" style="background-color: ${p.card};">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md" style="background-color: ${p.accent}25; color: ${p.accent};">
+                ${p.tag}
+              </span>
+              ${isSelected ? '<span class="text-xs">✅ Seçildi</span>' : ''}
+            </div>
+
+            <div class="text-xs font-bold text-white group-hover:text-amber-200 smooth-transition truncate">
+              ${p.name}
+            </div>
+            <div class="text-[10px] text-slate-400 mt-0.5 truncate">
+              ${p.hotelType}
+            </div>
+
+            <!-- Mini Swatch Bar -->
+            <div class="flex items-center gap-1.5 mt-2.5 pt-2 border-t border-white/10">
+              <span class="w-4 h-4 rounded-full border border-white/20" style="background-color: ${p.bg};" title="Fon"></span>
+              <span class="w-4 h-4 rounded-full border border-white/20" style="background-color: ${p.card};" title="Kart"></span>
+              <span class="w-4 h-4 rounded-full border border-white/20 shadow-sm" style="background-color: ${p.accent};" title="Aksent"></span>
+              <span class="w-4 h-4 rounded-full border border-white/20" style="background-color: ${p.sub};" title="Mətn"></span>
+              <span class="text-[9px] font-mono text-slate-400 ml-auto">${p.accent}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectPalette(id) {
+      currentSelectedId = id;
+      const p = palettes.find(item => item.id === id);
+      if (!p) return;
+
+      // 1. Update Left Info Card
+      const card = document.getElementById('activePaletteInfoCard');
+      card.style.backgroundColor = p.bg;
+      card.style.borderColor = p.accent + '60';
+
+      document.getElementById('activeTag').innerText = p.tag;
+      document.getElementById('activeTag').style.backgroundColor = p.accent + '25';
+      document.getElementById('activeTag').style.color = p.accent;
+      document.getElementById('activeTag').style.borderColor = p.accent + '40';
+
+      document.getElementById('activeHotelType').innerText = p.hotelType;
+      document.getElementById('activeColorDot').style.backgroundColor = p.accent;
+      document.getElementById('activeTitle').innerText = p.name;
+      document.getElementById('activeDesc').innerText = p.desc;
+
+      // Swatches
+      document.getElementById('swBg').style.backgroundColor = p.bg;
+      document.getElementById('swBgHex').innerText = p.bg;
+      document.getElementById('swCard').style.backgroundColor = p.card;
+      document.getElementById('swCardHex').innerText = p.card;
+      document.getElementById('swAccent').style.backgroundColor = p.accent;
+      document.getElementById('swAccentHex').innerText = p.accent;
+      document.getElementById('swSub').style.backgroundColor = p.sub;
+      document.getElementById('swSubHex').innerText = p.sub;
+
+      document.getElementById('cssSnippetText').innerText = `--color-primary: ${p.accent}; --bg-main: ${p.bg}; --bg-card: ${p.card};`;
+
+      // 2. Update Live Phone Screen Mockup
+      const phoneScreen = document.getElementById('phoneScreen');
+      phoneScreen.style.backgroundColor = p.bg;
+
+      const fade = document.getElementById('phoneBannerFade');
+      fade.style.background = `linear-gradient(to top, ${p.bg}, rgba(0,0,0,0.4), rgba(0,0,0,0.2))`;
+
+      const langBtn = document.getElementById('phoneLangBtn');
+      langBtn.style.backgroundColor = p.accent;
+      langBtn.style.color = p.accentText;
+
+      const verified = document.getElementById('phoneVerifiedBadge');
+      verified.style.color = p.accent;
+
+      const actionBtn = document.getElementById('phoneActionBtn');
+      actionBtn.style.backgroundColor = p.accent;
+      actionBtn.style.color = p.accentText;
+
+      // Cards inside phone
+      const card1 = document.getElementById('phoneCard1');
+      const card2 = document.getElementById('phoneCard2');
+      card1.style.backgroundColor = p.card;
+      card2.style.backgroundColor = p.card;
+
+      const icon1 = document.getElementById('phoneIconBox1');
+      const icon2 = document.getElementById('phoneIconBox2');
+      icon1.style.backgroundColor = p.accent + '25';
+      icon1.style.color = p.accent;
+      icon2.style.backgroundColor = p.accent + '25';
+      icon2.style.color = p.accent;
+
+      document.getElementById('phoneChevron1').style.color = p.accent;
+      document.getElementById('phoneChevron2').style.color = p.accent;
+
+      const activity = document.getElementById('phoneActivityCard');
+      activity.style.borderColor = p.accent + '40';
+      const actIcon = document.getElementById('phoneActivityIcon');
+      actIcon.style.backgroundColor = p.accent + '25';
+      actIcon.style.color = p.accent;
+
+      // Re-render palette grid to show checkmark
+      renderPalettes();
+    }
+
+    function filterCategory(cat) {
+      currentCategory = cat;
+      ['all', 'luxury', 'beach', 'nature', 'urban'].forEach(c => {
+        const btn = document.getElementById('tab-' + c);
+        if (c === cat) {
+          btn.className = "px-3 py-1.5 rounded-xl font-bold bg-blue-600 text-white transition";
+        } else {
+          btn.className = "px-3 py-1.5 rounded-xl text-[var(--muted-foreground)] hover:text-white transition";
+        }
+      });
+      renderPalettes();
+    }
+
+    function copyCurrentCss() {
+      const p = palettes.find(item => item.id === currentSelectedId);
+      if (!p) return;
+      const css = `:root {
+  --bg-main: ${p.bg};
+  --bg-card: ${p.card};
+  --color-primary: ${p.accent};
+  --color-accent-text: ${p.accentText};
+  --text-muted: ${p.sub};
+}`;
+      navigator.clipboard.writeText(css).then(() => {
+        document.getElementById('copyBtnText').innerText = "Kopyalandı!";
+        document.getElementById('copyBtnIcon').innerText = "✅";
+        setTimeout(() => {
+          document.getElementById('copyBtnText').innerText = "Kodu Kopyala";
+          document.getElementById('copyBtnIcon').innerText = "📋";
+        }, 2000);
+      });
+    }
+
+    // Initial render
+    renderPalettes();
+    selectPalette(1);
+  </script>
+</body>
+</html>
