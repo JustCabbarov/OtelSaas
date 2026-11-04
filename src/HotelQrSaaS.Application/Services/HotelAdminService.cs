@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using HotelQrSaaS.Application.Common.Exceptions;
 using HotelQrSaaS.Application.DTOs;
 using HotelQrSaaS.Application.Interfaces.Services;
@@ -57,17 +58,20 @@ public class HotelAdminService : IHotelAdminService
     private readonly IFileStorageService _fileStorage;
     private readonly INotificationDispatcher _notificationDispatcher;
     private readonly IQrCodeService _qrCodeService;
+    private readonly IConfiguration _configuration;
 
     public HotelAdminService(
         IUnitOfWork unitOfWork,
         IFileStorageService fileStorage,
         INotificationDispatcher notificationDispatcher,
-        IQrCodeService qrCodeService)
+        IQrCodeService qrCodeService,
+        IConfiguration configuration)
     {
         _unitOfWork = unitOfWork;
         _fileStorage = fileStorage;
         _notificationDispatcher = notificationDispatcher;
         _qrCodeService = qrCodeService;
+        _configuration = configuration;
     }
 
     public async Task<HotelProfileDto> GetProfileAsync(Guid tenantId, CancellationToken cancellationToken = default)
@@ -451,7 +455,7 @@ public class HotelAdminService : IHotelAdminService
         var tenant = await _unitOfWork.Tenants.GetByIdAsync(tenantId, cancellationToken);
         if (tenant == null) throw new NotFoundException("Otel tapılmadı.");
 
-        var fullPortalUrl = $"{baseUrl.TrimEnd('/')}/api/public/{tenant.Slug}";
+        var fullPortalUrl = ResolveQrUrl(tenant, baseUrl);
         var qrSetting = (await _unitOfWork.QrSettings.FindAsync(q => q.TenantId == tenantId, cancellationToken)).FirstOrDefault();
 
         return _qrCodeService.GeneratePngQrCode(
@@ -467,7 +471,7 @@ public class HotelAdminService : IHotelAdminService
         var tenant = await _unitOfWork.Tenants.GetByIdAsync(tenantId, cancellationToken);
         if (tenant == null) throw new NotFoundException("Otel tapılmadı.");
 
-        var fullPortalUrl = $"{baseUrl.TrimEnd('/')}/api/public/{tenant.Slug}";
+        var fullPortalUrl = ResolveQrUrl(tenant, baseUrl);
         var qrSetting = (await _unitOfWork.QrSettings.FindAsync(q => q.TenantId == tenantId, cancellationToken)).FirstOrDefault();
 
         return _qrCodeService.GenerateSvgQrCode(
@@ -475,6 +479,21 @@ public class HotelAdminService : IHotelAdminService
             qrSetting?.ForegroundColorHex,
             qrSetting?.BackgroundColorHex
         );
+    }
+
+    private string ResolveQrUrl(Tenant tenant, string baseUrl)
+    {
+        var directLink = _configuration.GetValue<bool>("FrontendSettings:DirectQrLink");
+        var frontendBaseUrl = _configuration["FrontendSettings:BaseUrl"];
+
+        // Əgər birbaşa frontend linki tələb olunubsa və təyin edilibsə
+        if (directLink && !string.IsNullOrWhiteSpace(frontendBaseUrl))
+        {
+            return $"{frontendBaseUrl.TrimEnd('/')}/{tenant.Slug}";
+        }
+
+        // Dinamik və analitika toplayan yönləndirmə linki (/q/{slug})
+        return $"{baseUrl.TrimEnd('/')}/q/{tenant.Slug}";
     }
 
     public async Task<AnalyticsSummaryDto> GetAnalyticsSummaryAsync(Guid tenantId, CancellationToken cancellationToken = default)

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using HotelQrSaaS.Application.Common.Exceptions;
 using HotelQrSaaS.Application.DTOs;
 using HotelQrSaaS.Application.Interfaces.Services;
@@ -13,6 +14,7 @@ public interface IPublicPortalService
     Task<(byte[] VCardBytes, string FileName)> GetVCardAsync(string slug, string? ipAddress, string? userAgent, CancellationToken cancellationToken = default);
     Task<bool> SubmitInquiryAsync(string slug, SubmitInquiryRequestDto request, string? ipAddress, string? userAgent, CancellationToken cancellationToken = default);
     Task<string> ProcessRedirectAsync(Guid linkId, string? ipAddress, string? userAgent, CancellationToken cancellationToken = default);
+    Task<string> ProcessQrScanRedirectAsync(string slug, string? ipAddress, string? userAgent, CancellationToken cancellationToken = default);
     Task<byte[]> GetQrPngAsync(string slug, string baseUrl, CancellationToken cancellationToken = default);
     Task<string> GetQrSvgAsync(string slug, string baseUrl, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<PublicActivityDto>> GetActivitiesAsync(string slug, string? lang, DateTime? date = null, CancellationToken cancellationToken = default);
@@ -24,17 +26,20 @@ public class PublicPortalService : IPublicPortalService
     private readonly INotificationDispatcher _notificationDispatcher;
     private readonly IVCardService _vCardService;
     private readonly IQrCodeService _qrCodeService;
+    private readonly IConfiguration _configuration;
 
     public PublicPortalService(
         IUnitOfWork unitOfWork,
         INotificationDispatcher notificationDispatcher,
         IVCardService vCardService,
-        IQrCodeService qrCodeService)
+        IQrCodeService qrCodeService,
+        IConfiguration configuration)
     {
         _unitOfWork = unitOfWork;
         _notificationDispatcher = notificationDispatcher;
         _vCardService = vCardService;
         _qrCodeService = qrCodeService;
+        _configuration = configuration;
     }
 
     public async Task<PublicHotelPortalDto> GetPublicPortalAsync(
@@ -287,12 +292,42 @@ public class PublicPortalService : IPublicPortalService
         return link.TargetUrl;
     }
 
+    public async Task<string> ProcessQrScanRedirectAsync(string slug, string? ipAddress, string? userAgent, CancellationToken cancellationToken = default)
+    {
+        var tenant = await _unitOfWork.Tenants.GetBySlugAsync(slug, cancellationToken: cancellationToken);
+        if (tenant == null || tenant.IsDeleted)
+        {
+            throw new NotFoundException("Otel tapılmadı.");
+        }
+
+        // 1. Qonağın QR kod skanını analitikaya yaz (+1 scan)
+        await RecordAnalyticsAsync(tenant.Id, null, AnalyticsEventType.QrCodeScan, ipAddress, userAgent);
+
+        // 2. Əgər otelin xüsusi domeni varsa (məs: hilton.az)
+        if (!string.IsNullOrWhiteSpace(tenant.CustomDomain))
+        {
+            return tenant.CustomDomain.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? tenant.CustomDomain
+                : $"https://{tenant.CustomDomain}";
+        }
+
+        // 3. Konfiqurasiyadakı Frontend BaseUrl
+        var frontendBaseUrl = _configuration["FrontendSettings:BaseUrl"];
+        if (!string.IsNullOrWhiteSpace(frontendBaseUrl))
+        {
+            return $"{frontendBaseUrl.TrimEnd('/')}/{tenant.Slug}";
+        }
+
+        // 4. Default olaraq public API səhifəsi
+        return $"/api/public/{tenant.Slug}";
+    }
+
     public async Task<byte[]> GetQrPngAsync(string slug, string baseUrl, CancellationToken cancellationToken = default)
     {
         var tenant = await _unitOfWork.Tenants.GetBySlugAsync(slug, cancellationToken: cancellationToken);
         if (tenant == null) throw new NotFoundException("Otel tapılmadı.");
 
-        var fullPortalUrl = $"{baseUrl.TrimEnd('/')}/api/public/{tenant.Slug}";
+        var fullPortalUrl = ResolveQrUrl(tenant, baseUrl);
         var qrSetting = (await _unitOfWork.QrSettings.FindAsync(q => q.TenantId == tenant.Id, cancellationToken)).FirstOrDefault();
 
         return _qrCodeService.GeneratePngQrCode(
@@ -308,7 +343,7 @@ public class PublicPortalService : IPublicPortalService
         var tenant = await _unitOfWork.Tenants.GetBySlugAsync(slug, cancellationToken: cancellationToken);
         if (tenant == null) throw new NotFoundException("Otel tapılmadı.");
 
-        var fullPortalUrl = $"{baseUrl.TrimEnd('/')}/api/public/{tenant.Slug}";
+        var fullPortalUrl = ResolveQrUrl(tenant, baseUrl);
         var qrSetting = (await _unitOfWork.QrSettings.FindAsync(q => q.TenantId == tenant.Id, cancellationToken)).FirstOrDefault();
 
         return _qrCodeService.GenerateSvgQrCode(
@@ -316,6 +351,21 @@ public class PublicPortalService : IPublicPortalService
             qrSetting?.ForegroundColorHex,
             qrSetting?.BackgroundColorHex
         );
+    }
+
+    private string ResolveQrUrl(Tenant tenant, string baseUrl)
+    {
+        var directLink = _configuration.GetValue<bool>("FrontendSettings:DirectQrLink");
+        var frontendBaseUrl = _configuration["FrontendSettings:BaseUrl"];
+
+        // Əgər birbaşa frontend linki tələb olunubsa və təyin edilibsə
+        if (directLink && !string.IsNullOrWhiteSpace(frontendBaseUrl))
+        {
+            return $"{frontendBaseUrl.TrimEnd('/')}/{tenant.Slug}";
+        }
+
+        // Dinamik və analitika toplayan yönləndirmə linki (/q/{slug})
+        return $"{baseUrl.TrimEnd('/')}/q/{tenant.Slug}";
     }
 
     private async Task RecordAnalyticsAsync(

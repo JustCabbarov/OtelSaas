@@ -91,6 +91,31 @@ public class PublicHotelController : ControllerBase
     }
 
     /// <summary>
+    /// Qonaq QR kodu skan edəndə: Analitikanı (+1 scan) qeyd edir və dərhal Frontend səhifəsinə yönləndirir (HTTP 302)
+    /// </summary>
+    [HttpGet("q/{slug}")]
+    [HttpGet("api/q/{slug}")]
+    public async Task<IActionResult> ScanQrRedirect(
+        [FromRoute] string slug,
+        CancellationToken cancellationToken)
+    {
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = Request.Headers.UserAgent.ToString();
+
+        var destinationUrl = await _publicPortalService.ProcessQrScanRedirectAsync(slug, ip, userAgent, cancellationToken);
+
+        // Əgər nisbi linkdirsə, cari host ilə birləşdir
+        if (!destinationUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+            !destinationUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        {
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
+            destinationUrl = $"{baseUrl.TrimEnd('/')}/{destinationUrl.TrimStart('/')}";
+        }
+
+        return Redirect(destinationUrl);
+    }
+
+    /// <summary>
     /// Otelin dinamik QR kodunu PNG formatında gətirmək (Qonaq və ya brauzer üçün açıq endpoint)
     /// </summary>
     [HttpGet("api/public/{slug}/qr/png")]
