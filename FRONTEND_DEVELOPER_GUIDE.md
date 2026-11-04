@@ -4,6 +4,25 @@ Bu sənəd **Hotel QR SaaS** platformasının frontend (UI/UX) proqramçısı ü
 
 ---
 
+## 🚀 0. Backend-i Lokalda 1 Əmrlə İşə Salmaq (Docker Compose)
+
+Frontend proqramçının kompüterində **.NET SDK** və ya **PostgreSQL** quraşdırmasına ehtiyac yoxdur. Sadəcə olaraq terminalda repozitoriya qovluğunda bu tək əmri işə salmaq kifayətdir:
+
+```bash
+docker compose up --build
+```
+
+Bu əmr avtomatik olaraq:
+1. **PostgreSQL** bazasını qaldırır (`port: 5432`).
+2. **.NET 8 Web API** tətbiqini build edir və işə salır (`port: 5281`).
+3. Verilənlər bazasının cədvəllərini avtomatik yaradır və hazır demo otel məlumatlarını (`hotel-resort`), kateqoriyaları və test istifadəçilərini bazaya yazır (seed edir).
+
+* Backend API URL: **`http://localhost:5281`**
+* Swagger API Sənədləri: **`http://localhost:5281/swagger`**
+* Test Admin Girişi: `admin@hotelresort.com` / `Hotel123!`
+
+---
+
 ## 📌 1. Sistemin Arxitekturası & Əsas Məntiqi
 
 Platforma **Multi-Tenant SaaS** (çoxlu otelli) arxitekturaya malikdir:

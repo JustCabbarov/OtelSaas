@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: hotelqr-postgres-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hotel_qr_saas_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hotel_qr_saas_db"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hotelqr-backend-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5281:5281"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5281
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=hotel_qr_saas_db;Username=postgres;Password=postgres
+    volumes:
+      - api_uploads:/app/wwwroot/uploads
+
+volumes:
+  postgres_data:
+  api_uploads:
