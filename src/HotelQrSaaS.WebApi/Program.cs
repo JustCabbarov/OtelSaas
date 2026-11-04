@@ -154,6 +154,34 @@ var app = builder.Build();
 // 6. Middleware Pipeline
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
+// Fix: Swagger UI regex expects OpenAPI <= 3.0.3, while Microsoft.OpenApi outputs 3.0.4
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.Value != null && context.Request.Path.Value.EndsWith("swagger.json", StringComparison.OrdinalIgnoreCase))
+    {
+        var originalBodyStream = context.Response.Body;
+        using var memoryStream = new MemoryStream();
+        context.Response.Body = memoryStream;
+
+        await next();
+
+        memoryStream.Position = 0;
+        using var reader = new StreamReader(memoryStream);
+        var responseBody = await reader.ReadToEndAsync();
+
+        responseBody = responseBody.Replace("\"openapi\": \"3.0.4\"", "\"openapi\": \"3.0.1\"")
+                                   .Replace("\"openapi\":\"3.0.4\"", "\"openapi\":\"3.0.1\"");
+
+        var bytes = System.Text.Encoding.UTF8.GetBytes(responseBody);
+        context.Response.Body = originalBodyStream;
+        context.Response.ContentLength = bytes.Length;
+        await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+        return;
+    }
+
+    await next();
+});
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
