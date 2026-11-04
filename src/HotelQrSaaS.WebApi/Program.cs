@@ -126,11 +126,12 @@ builder.Services.AddSwaggerGen(c =>
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization başlığı 'Bearer {token}' formatında daxil edilməlidir. Məsələn: 'Bearer eyJhbGciOiJIUzI1Ni...'",
+        Description = "JWT Tokeninizi daxil edin (Bearer avtomatik tətbiq olunur)",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
