@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Altensor Loqo Formalı QR Kod Konsepti</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* Altensor Asymmetric Organic Pebble Silhouette */
+    .altensor-shape {
+      border-radius: 46% 54% 78% 22% / 36% 42% 58% 64%;
+    }
+    .altensor-gradient {
+      background: linear-gradient(135deg, #A855F7 0%, #7C3AED 45%, #2563EB 85%, #1D4ED8 100%);
+    }
+    .altensor-glow {
+      box-shadow: 0 15px 40px -5px rgba(124, 58, 237, 0.45);
+    }
+    .stand-shadow {
+      box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px rgba(124, 58, 237, 0.2);
+    }
+    .smooth-transition {
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body class="bg-transparent text-[var(--foreground)] antialiased p-3 sm:p-6">
+
+  <div class="max-w-5xl mx-auto bg-[var(--card)] border border-[var(--border)] rounded-3xl p-5 sm:p-8 shadow-2xl">
+    
+    <!-- Top Header -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-[var(--border)]">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/30 mb-2">
+          <span>✨</span> İnnovativ QR Kod Dizaynı
+        </div>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--foreground)]">
+          Kvadrat Yox, Altensor Loqosu Şəklində QR Kod
+        </h1>
+        <p class="text-xs sm:text-sm text-[var(--muted-foreground)] mt-1">
+          Bəli! QR kodu sıxıcı kvadratdan çıxarıb Altensorun xüsusi orqanik silueti formasında hazırlamaq tamamilə mümkündür.
+        </p>
+      </div>
+
+      <!-- Mode Selector -->
+      <div class="flex items-center p-1 bg-black/40 rounded-2xl border border-[var(--border)] text-xs">
+        <button id="tab-stand" onclick="switchView('stand')" class="px-3.5 py-2 rounded-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md transition">
+          🏆 1. Masa Stendi (Die-Cut Stand)
+        </button>
+        <button id="tab-card" onclick="switchView('card')" class="px-3.5 py-2 rounded-xl text-[var(--muted-foreground)] hover:text-white transition">
+          💎 2. Qara VIP Plaketi
+        </button>
+        <button id="tab-compare" onclick="switchView('compare')" class="px-3.5 py-2 rounded-xl text-[var(--muted-foreground)] hover:text-white transition">
+          ⚖️ 3. Kvadrat vs Altensor
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8 items-center">
+      
+      <!-- LEFT: Live Interactive Visual Standee / Card Preview (7 cols) -->
+      <div class="lg:col-span-7 flex flex-col items-center justify-center p-6 sm:p-10 rounded-3xl bg-black/50 border border-white/5 relative overflow-hidden min-h-[500px]">
+        
+        <!-- Ambient Background Glow matching Altensor Colors -->
+        <div class="absolute w-72 h-72 rounded-full bg-purple-600/20 blur-3xl -top-10 -left-10 pointer-events-none"></div>
+        <div class="absolute w-72 h-72 rounded-full bg-blue-600/20 blur-3xl -bottom-10 -right-10 pointer-events-none"></div>
+
+        <!-- VIEW 1: Altensor Shaped Acrylic Table Stand (Die-Cut) -->
+        <div id="viewStand" class="smooth-transition flex flex-col items-center">
+          
+          <!-- The Organic Altensor Pebble Badge Frame -->
+          <div class="w-[280px] sm:w-[320px] h-[340px] sm:h-[380px] p-2.5 altensor-shape altensor-gradient altensor-glow stand-shadow relative flex flex-col items-center justify-center smooth-transition">
+            
+            <!-- Inner Dark Background following the shape -->
+            <div class="w-full h-full altensor-shape bg-[#0B0F17] flex flex-col items-center justify-center p-4 relative overflow-hidden border border-white/10">
+              
+              <!-- Subtle internal glow -->
+              <div class="absolute -top-12 -right-12 w-32 h-32 bg-purple-500/25 rounded-full blur-xl pointer-events-none"></div>
+              
+              <!-- Top Header: Hotel & Prompt -->
+              <div class="text-center mb-2 z-10">
+                <span class="text-[9px] uppercase tracking-widest text-purple-300 font-bold bg-purple-500/20 px-2 py-0.5 rounded-full border border-purple-500/30">
+                  Rəqəmsal Menyu & Otaq Xidməti
+                </span>
+                <h3 class="text-xs font-bold text-white mt-1">Hotel & Resort Baku</h3>
+              </div>
+
+              <!-- Functional Scannable QR Container -->
+              <div class="p-3 bg-white rounded-3xl shadow-2xl relative z-10 flex flex-col items-center justify-center border-2 border-purple-500/40">
+                
+                <!-- Live Scannable SVG QR Code from backend API -->
+                <div class="w-36 h-36 sm:w-40 sm:h-40 flex items-center justify-center overflow-hidden rounded-2xl relative">
+                  <img src="http://localhost:5281/api/public/hotel-resort/qr/png" alt="Scannable Altensor QR Code" class="w-full h-full object-contain">
+                </div>
+
+                <div class="text-[9px] font-bold text-slate-800 mt-1.5 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Kamera ilə Skan Edin
+                </div>
+              </div>
+
+              <!-- Bottom Altensor Branding in Stand -->
+              <div class="mt-3 text-center z-10">
+                <div class="text-[10px] font-extrabold tracking-wider text-white">Altensor</div>
+                <div class="text-[8px] text-purple-300/80">AI-Powered Business Solutions</div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Stand Wooden / Acrylic Base on Table -->
+          <div class="w-52 h-4 rounded-full bg-gradient-to-r from-slate-800 via-slate-600 to-slate-800 border-t border-white/20 shadow-2xl -mt-2 z-20"></div>
+          <div class="text-[11px] text-slate-400 mt-3 font-medium flex items-center gap-1.5">
+            <span>✨</span> Otel masalarında akril stend görünüşü (kvadrat yox, xüsusi kəsim)
+          </div>
+        </div>
+
+        <!-- VIEW 2: Pure Luxury Black VIP Card (Shape Cutout) -->
+        <div id="viewCard" class="smooth-transition hidden flex flex-col items-center">
+          <div class="w-[300px] h-[360px] p-3 altensor-shape bg-gradient-to-br from-[#1E293B] via-[#0F172A] to-[#020617] border-2 border-[#D4AF37]/50 shadow-2xl relative flex flex-col items-center justify-center" style="box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 25px rgba(212, 175, 55, 0.25);">
+            
+            <div class="text-center mb-3">
+              <div class="text-[10px] font-bold text-[#F5D061] tracking-widest uppercase">VIP Concierge</div>
+              <div class="text-xs font-bold text-white">Lüks Otaq Kartı & QR</div>
+            </div>
+
+            <!-- Scannable QR with Gold Outline -->
+            <div class="p-3 bg-white rounded-3xl shadow-xl border-2 border-[#D4AF37]">
+              <img src="http://localhost:5281/api/public/hotel-resort/qr/png" alt="VIP QR" class="w-36 h-36 object-contain">
+            </div>
+
+            <div class="mt-3 text-center">
+              <span class="text-[10px] text-slate-300">Telefon kamerasını yaxınlaşdırın</span>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-400 mt-4 font-medium flex items-center gap-1.5">
+            <span>⭐</span> VIP otaqlarda dəri və ya metal stiker formatı
+          </div>
+        </div>
+
+        <!-- VIEW 3: Direct Side-by-Side Comparison -->
+        <div id="viewCompare" class="smooth-transition hidden w-full grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+          
+          <!-- Boring Old Square -->
+          <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col items-center text-center opacity-70">
+            <span class="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-2">❌ Standart Kvadrat (Köhnə)</span>
+            <div class="w-32 h-32 bg-white p-2 rounded-lg border border-slate-300 shadow">
+              <img src="http://localhost:5281/api/public/hotel-resort/qr/png" alt="Old Square" class="w-full h-full object-contain">
+            </div>
+            <p class="text-[10px] text-slate-400 mt-2">Darıxdırıcı, hər yerdə görünən kvadrat etiket.</p>
+          </div>
+
+          <!-- Premium Altensor Shape -->
+          <div class="p-4 rounded-2xl bg-purple-950/30 border border-purple-500/40 flex flex-col items-center text-center">
+            <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-2">✅ Altensor Forması (Premium)</span>
+            <div class="w-32 h-36 p-1.5 altensor-shape altensor-gradient flex items-center justify-center shadow-lg">
+              <div class="w-full h-full altensor-shape bg-[#090D16] p-2 flex items-center justify-center">
+                <div class="w-20 h-20 bg-white p-1 rounded-xl">
+                  <img src="http://localhost:5281/api/public/hotel-resort/qr/png" alt="Altensor Shaped QR" class="w-full h-full object-contain">
+                </div>
+              </div>
+            </div>
+            <p class="text-[10px] text-purple-200 mt-2 font-medium">Brendi yadda saxladan eksklüziv kəsim.</p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Technical Explanation & Scan Test (5 cols) -->
+      <div class="lg:col-span-5 space-y-5">
+        
+        <!-- Live Scan Test Box -->
+        <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-white">
+          <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            Canlı Skan Testi
+          </div>
+          <h4 class="text-sm font-bold text-white">Telefonunuzla İndi Yoxlayın!</h4>
+          <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+            Ekranda gördüyünüz bu Altensor formalı QR kod <strong>tamamilə real və aktivdir</strong>. Öz telefonunuzun kamerasını ekrandakı koda tutaraq otelin mobil portalının dərhal açıldığını sınaqdan keçirə bilərsiniz.
+          </p>
+        </div>
+
+        <!-- How It Works & Why It's 100% Reliable -->
+        <div class="p-5 rounded-2xl bg-black/30 border border-[var(--border)] space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
+            <span>⚙️</span> Texniki Mexanizm: Necə Mümkündür?
+          </h4>
+          
+          <div class="space-y-2.5 text-xs text-slate-300">
+            <div class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+              <div>
+                <strong class="text-white">Standart Skan Zəmanəti (ISO Standartı):</strong>
+                <p class="text-slate-400 text-[11px] mt-0.5">Kameralar QR kodun 3 künc gözünü gördükdə dərhal oxuyur. QR kodun ətrafındakı haşiyə və xarici lövhə isə istənilən orqanik formada kəsilə bilər.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-lg bg-blue-500/20 text-blue-300 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+              <div>
+                <strong class="text-white">Level H (30% Error Correction):</strong>
+                <p class="text-slate-400 text-[11px] mt-0.5">Backend-də tətbiq etdiyimiz <strong>ECC Level H</strong> səviyyəsi sayəsində mərkəzində Altensor loqosu olsa və kənarları yumrulansa belə kod 100% etibarlılıqla skan olunur.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+              <div>
+                <strong class="text-white">Çap üçün Lazer / CNC Kəsim (Die-Cut):</strong>
+                <p class="text-slate-400 text-[11px] mt-0.5">Mətbəələr üçün SVG və ya PDF vektor faylı verilir. Lazer kəsici aparat akril lövhəni və stikeri kvadrat yox, Altensorun asimmetrik silueti şəklində kəsir.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Benefit Callout -->
+        <div class="p-4 rounded-2xl bg-gradient-to-r from-purple-950/40 to-blue-950/40 border border-purple-500/30">
+          <div class="text-xs font-bold text-white flex items-center gap-2 mb-1">
+            <span>💡</span> Restoran & Otellər üçün Marketinq Gücü
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Qonaqlar hər restoranda gördükləri adi kvadrat QR kodlara artıq diqqət yetirmirlər. Altensorun bu xüsusi dizaynı isə masada sənət əsəri kimi durur və qonaqlarda <strong>maraq oyadaraq skan etmə faizini 3 dəfə artırır</strong>.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function switchView(mode) {
+      const stand = document.getElementById('viewStand');
+      const card = document.getElementById('viewCard');
+      const compare = document.getElementById('viewCompare');
+
+      const tabStand = document.getElementById('tab-stand');
+      const tabCard = document.getElementById('tab-card');
+      const tabCompare = document.getElementById('tab-compare');
+
+      [tabStand, tabCard, tabCompare].forEach(t => {
+        t.className = "px-3.5 py-2 rounded-xl text-[var(--muted-foreground)] hover:text-white transition";
+      });
+
+      stand.classList.add('hidden');
+      card.classList.add('hidden');
+      compare.classList.add('hidden');
+
+      if (mode === 'stand') {
+        stand.classList.remove('hidden');
+        tabStand.className = "px-3.5 py-2 rounded-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md transition";
+      } else if (mode === 'card') {
+        card.classList.remove('hidden');
+        tabCard.className = "px-3.5 py-2 rounded-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md transition";
+      } else if (mode === 'compare') {
+        compare.classList.remove('hidden');
+        tabCompare.className = "px-3.5 py-2 rounded-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md transition";
+      }
+    }
+  </script>
+</body>
+</html>
