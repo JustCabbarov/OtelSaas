@@ -51,6 +51,7 @@ public interface IHotelAdminService
     Task<HotelStoryDto> CreateStoryAsync(Guid tenantId, CreateHotelStoryDto request, CancellationToken cancellationToken = default);
     Task<HotelStoryDto> UpdateStoryAsync(Guid tenantId, Guid storyId, UpdateHotelStoryDto request, CancellationToken cancellationToken = default);
     Task<string> UploadStoryImageAsync(Guid tenantId, Guid storyId, Stream fileStream, string fileName, CancellationToken cancellationToken = default);
+    Task<string> UploadStoryVideoAsync(Guid tenantId, Guid storyId, Stream fileStream, string fileName, CancellationToken cancellationToken = default);
     Task DeleteStoryAsync(Guid tenantId, Guid storyId, CancellationToken cancellationToken = default);
 
     // Hubs (6 Core Hotel Tiles)
@@ -714,9 +715,30 @@ public class HotelAdminService : IHotelAdminService
         var story = await _unitOfWork.Stories.GetByIdAsync(storyId, cancellationToken);
         if (story == null || story.TenantId != tenantId) throw new NotFoundException("Story tapılmadı.");
 
+        var ext = Path.GetExtension(fileName).ToLowerInvariant();
+        if (ext is ".mp4" or ".webm" or ".mov" or ".m4v")
+        {
+            return await UploadStoryVideoAsync(tenantId, storyId, fileStream, fileName, cancellationToken);
+        }
+
         _fileStorage.DeleteFile(story.ImageUrl);
         var url = await _fileStorage.SaveFileAsync(fileStream, fileName, "stories", tenantId, cancellationToken);
         story.ImageUrl = url;
+        story.BannerImageUrl ??= url;
+
+        _unitOfWork.Stories.Update(story);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        return url;
+    }
+
+    public async Task<string> UploadStoryVideoAsync(Guid tenantId, Guid storyId, Stream fileStream, string fileName, CancellationToken cancellationToken = default)
+    {
+        var story = await _unitOfWork.Stories.GetByIdAsync(storyId, cancellationToken);
+        if (story == null || story.TenantId != tenantId) throw new NotFoundException("Story tapılmadı.");
+
+        _fileStorage.DeleteFile(story.VideoUrl);
+        var url = await _fileStorage.SaveFileAsync(fileStream, fileName, "stories", tenantId, cancellationToken);
+        story.VideoUrl = url;
 
         _unitOfWork.Stories.Update(story);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

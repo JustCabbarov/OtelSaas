@@ -9,7 +9,8 @@ public class LocalFileStorageService : IFileStorageService
     private readonly IWebHostEnvironment _environment;
     private static readonly HashSet<string> AllowedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
-        ".jpg", ".jpeg", ".png", ".webp", ".svg", ".pdf"
+        ".jpg", ".jpeg", ".png", ".webp", ".svg", ".gif", ".pdf",
+        ".mp4", ".webm", ".mov", ".m4v"
     };
 
     public LocalFileStorageService(IWebHostEnvironment environment)

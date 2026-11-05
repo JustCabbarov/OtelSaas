@@ -430,6 +430,7 @@ public class HotelAdminController : ControllerBase
     }
 
     [HttpPost("stories/{id:guid}/image")]
+    [RequestSizeLimit(100_000_000)]
     public async Task<ActionResult<ApiResponse<string>>> UploadStoryImage(
         [FromRoute] Guid id,
         IFormFile file,
@@ -440,7 +441,22 @@ public class HotelAdminController : ControllerBase
         var targetId = GetTenantId(tenantId);
         using var stream = file.OpenReadStream();
         var url = await _hotelAdminService.UploadStoryImageAsync(targetId, id, stream, file.FileName, cancellationToken);
-        return Ok(ApiResponse<string>.Ok(url, "Şəkil yükləndi."));
+        return Ok(ApiResponse<string>.Ok(url, "Story media faylı yükləndi."));
+    }
+
+    [HttpPost("stories/{id:guid}/video")]
+    [RequestSizeLimit(100_000_000)]
+    public async Task<ActionResult<ApiResponse<string>>> UploadStoryVideo(
+        [FromRoute] Guid id,
+        IFormFile file,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        if (file == null || file.Length == 0) throw new BadRequestException("Video faylı seçilməyib.");
+        var targetId = GetTenantId(tenantId);
+        using var stream = file.OpenReadStream();
+        var url = await _hotelAdminService.UploadStoryVideoAsync(targetId, id, stream, file.FileName, cancellationToken);
+        return Ok(ApiResponse<string>.Ok(url, "Story videosu uğurla yükləndi."));
     }
 
     [HttpDelete("stories/{id:guid}")]
