@@ -27,6 +27,8 @@ public interface IFileStorageService
 public interface INotificationDispatcher
 {
     Task<bool> DispatchInquiryNotificationAsync(Tenant tenant, GuestInquiry inquiry, CancellationToken cancellationToken = default);
+    Task<bool> DispatchOrderNotificationAsync(Tenant tenant, GuestOrder order, CancellationToken cancellationToken = default);
+    Task<bool> DispatchReviewNotificationAsync(Tenant tenant, GuestReview review, CancellationToken cancellationToken = default);
     Task<bool> SendTestNotificationAsync(Tenant tenant, NotificationChannel channel, CancellationToken cancellationToken = default);
     Task<(bool Success, string BotUsername, string ChatId, string? ChatTitle, string Message)> ConnectAndVerifyTelegramBotAsync(
         Tenant tenant, string botToken, string? manualChatId, CancellationToken cancellationToken = default);

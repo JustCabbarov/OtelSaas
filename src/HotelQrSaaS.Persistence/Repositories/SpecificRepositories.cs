@@ -143,3 +143,32 @@ public class AnalyticsRepository : GenericRepository<AnalyticsEvent>, IAnalytics
     }
 }
 
+public class GuestOrderRepository : GenericRepository<GuestOrder>, IGuestOrderRepository
+{
+    public GuestOrderRepository(ApplicationDbContext context) : base(context) { }
+
+    public async Task<IReadOnlyList<GuestOrder>> GetTenantOrdersAsync(Guid tenantId, OrderStatus? status = null, CancellationToken cancellationToken = default)
+    {
+        var query = _dbSet
+            .Include(o => o.Items)
+            .Where(o => o.TenantId == tenantId);
+
+        if (status.HasValue)
+        {
+            query = query.Where(o => o.Status == status.Value);
+        }
+
+        return await query
+            .OrderByDescending(o => o.CreatedAtUtc)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<GuestOrder?> GetOrderWithItemsAsync(Guid orderId, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .Include(o => o.Items)
+            .FirstOrDefaultAsync(o => o.Id == orderId, cancellationToken);
+    }
+}
+

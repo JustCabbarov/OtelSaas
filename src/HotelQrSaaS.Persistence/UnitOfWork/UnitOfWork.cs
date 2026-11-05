@@ -17,6 +17,14 @@ public class UnitOfWork : IUnitOfWork
     private IAnalyticsRepository? _analytics;
     private IGenericRepository<QrCodeSetting>? _qrSettings;
     private IGenericRepository<HotelActivity>? _activities;
+    private IGenericRepository<HotelStory>? _stories;
+    private IGenericRepository<HotelHub>? _hubs;
+    private IGenericRepository<CatalogCategory>? _catalogCategories;
+    private IGenericRepository<CatalogItem>? _catalogItems;
+    private IGuestOrderRepository? _guestOrders;
+    private IGenericRepository<GuestOrderItem>? _guestOrderItems;
+    private IGenericRepository<GuestReview>? _guestReviews;
+    private IGenericRepository<HotelDepartmentContact>? _departmentContacts;
 
     public UnitOfWork(ApplicationDbContext context)
     {
@@ -30,6 +38,14 @@ public class UnitOfWork : IUnitOfWork
     public IAnalyticsRepository Analytics => _analytics ??= new AnalyticsRepository(_context);
     public IGenericRepository<QrCodeSetting> QrSettings => _qrSettings ??= new GenericRepository<QrCodeSetting>(_context);
     public IGenericRepository<HotelActivity> Activities => _activities ??= new GenericRepository<HotelActivity>(_context);
+    public IGenericRepository<HotelStory> Stories => _stories ??= new GenericRepository<HotelStory>(_context);
+    public IGenericRepository<HotelHub> Hubs => _hubs ??= new GenericRepository<HotelHub>(_context);
+    public IGenericRepository<CatalogCategory> CatalogCategories => _catalogCategories ??= new GenericRepository<CatalogCategory>(_context);
+    public IGenericRepository<CatalogItem> CatalogItems => _catalogItems ??= new GenericRepository<CatalogItem>(_context);
+    public IGuestOrderRepository GuestOrders => _guestOrders ??= new GuestOrderRepository(_context);
+    public IGenericRepository<GuestOrderItem> GuestOrderItems => _guestOrderItems ??= new GenericRepository<GuestOrderItem>(_context);
+    public IGenericRepository<GuestReview> GuestReviews => _guestReviews ??= new GenericRepository<GuestReview>(_context);
+    public IGenericRepository<HotelDepartmentContact> DepartmentContacts => _departmentContacts ??= new GenericRepository<HotelDepartmentContact>(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

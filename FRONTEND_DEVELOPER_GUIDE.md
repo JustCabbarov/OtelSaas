@@ -178,6 +178,113 @@ Qonaq gündəlik partiləri, konsertləri və idman saatlarını görmək üçü
 
 ---
 
+### 4.5. Skyhill Modulları (qr.unipos.tech/skyhill ilə 1:1 Eyniləşdirilmiş): Stories (Video + CTA), 6 Əsas Hub, 30 Kateqoriya, 128 Məhsul, Səbət və Rəy
+
+`GET /api/public/{slug}?lang=az` sorğusu mövcud `categories` və `activities` ilə yanaşı aşağıdakı **Skyhill** məlumatlarını da qaytarır:
+* `subtitle`: `"Pirqulu"`, `tagline`: `"Hotel & Spa"`, `starRating`: `5`
+* `currencyCode`: `"₼"`, `serviceFeePercent`: `0`, `themePreset`: `"otel"`, `themeStyle`: `"yumsaq"`
+* Sosial şəbəkə linkləri: `instagramUrl`, `facebookUrl`, `youtubeUrl`, `tikTokUrl`, `tripAdvisorUrl`, `bookingUrl`
+* Hər bir mətndə həm seçilmiş dildəki dəyər (`title`, `subtitle`, `description`), həm də anında (client-side) dil dəyişimi (`AZ | EN | RU`) üçün üçdilli obyektlər (`titleTr: { az, en, ru }`, `subtitleTr`, `descriptionTr`, `badgeTr`, `buttonTr`) qaytarılır.
+* `stories`: Yuxarıda üfüqi sürüşdürülən **6 hekayə zolağı** (`externalId: 2..7`):
+  - **Xoş gəlmisiniz** (`videoUrl: ".../story-welcome.mp4"`, `buttonText: "Otel haqqında"`, `actionUrl: "/skyhill/hotel/g/191"`)
+  - **Günün menyusu** (`actionUrl: "/skyhill/hotel/c/4578"`)
+  - **Canlı musiqi** (`videoUrl: ".../story-live-music.mp4"`, `actionUrl: "/skyhill/hotel/p/43219"`)
+  - **Spa −20%** (`actionUrl: "/skyhill/hotel/g/193"`)
+  - **Ulduzlu gecə** (`actionUrl: "/skyhill/hotel/p/43224"`)
+  - **Səhər yeməyi** (`actionUrl: "/skyhill/hotel/c/4582"`)
+* `hubs`: Ana səhifədəki **6 əsas mərkəzi plitə (Hubs — `externalId: 191..196`)**:
+  1. `191` (`info`) — **Otel məlumatı** (`displayMode: "categories"`)
+  2. `192` (`food`) — **Qida və içki** (`displayMode: "categories"`)
+  3. `193` (`spa`) — **Spa və sağlamlıq — MARAL Spa** (`displayMode: "categories"`)
+  4. `194` (`entertainment`) — **Əyləncə** (`displayMode: "filter_items"` — `Hamısı / Restoran / Spa / Musiqi` filtri ilə birbaşa tədbirlər)
+  5. `195` (`contacts`) — **Əlaqə** (`displayMode: "direct_items"`)
+  6. `196` (`specials`) — **Günün təklifi** (`displayMode: "direct_items"`)
+* `dailySpecials`: Günün xüsusi təklifləri siyahısı
+* `departmentContacts`: Şöbələrin birbaşa zəng, WhatsApp, e-poçt və xəritə əlaqələri
+
+#### A. Bütöv Kataloqu / Səbət Məlumatlarını Tək Sorğuda Gətirmək (`/catalog` və `/cart`)
+UniPOS Skyhill-də olduğu kimi səbət (`localStorage`) və sürətli axtarış/filtr üçün bütün **30 kateqoriya (`4569..4598`)** və **128 məhsulu (`43107..43234`)** tək sorğuda gətirmək mümkündür:
+* **Endpoint:** `GET /api/public/{slug}/catalog?lang=az` *(və ya `GET /api/public/{slug}/cart?lang=az`)*
+* **Qaytarılan Məlumat (`PublicFullCatalogDto`):** `hubs`, `categories`, `items` və `products` (UniPOS formatında `nameTr`, `categoryNameTr`, `price`, `ingredient`, `qrIcon`, `qrBadge`, `qrActionType`, `qrActionValue`, `infoOnly`).
+
+#### B. Hub Daxili Səhifəni Gətirmək (`/hotel/g/{hubCodeOrId}`)
+* **Endpoint:** `GET /api/public/{slug}/hubs/{hubCodeOrId}?lang=az`
+  *(Alternativ alias: `GET /api/public/{slug}/hotel/g/{hubCodeOrId}?lang=az`)*
+  `hubCodeOrId` həm rəqəmsal Skyhill ID (`191`, `192`, `193`, `194`, `195`, `196`), həm `Guid`, həm də qısa kod (`info`, `food`, `spa`, `entertainment`, `contacts`, `specials`) ola bilər.
+* **1 Məhsullu Kateqoriyaların Birbaşa Detala Yönləndirilməsi (1-Item Category Collapse):**
+  UniPOS Skyhill-də olduğu kimi, əgər bir kateqoriyada yalnız 1 element varsa və `collapseIfSingleItem == true`-dursa (məs: `4569` *Xoş gəlmisiniz*, `4570` *Otel haqqında*, `4574` *Qaydalar*, `4575` *Ünvan*, `4576` *Əlaqə*, `4585` *MARAL Spa*, `4592` *Spa qaydaları*, `4593` *Spa rezervasiya*), həmin kateqoriyanın `targetUrl` sahəsi birbaşa məhsul səhifəsinə (`/{slug}/hotel/p/{singleItemExternalId}`) işarə edir.
+
+#### C. Restoran / Spa Bölməsinin Menyusunu Gətirmək (`/hotel/c/{categoryCodeOrId}`)
+* **Endpoint:** `GET /api/public/{slug}/catalog/categories/{categoryCodeOrId}?lang=az`
+  *(Alternativ alias: `GET /api/public/{slug}/hotel/c/{categoryCodeOrId}?lang=az`)*
+  `categoryCodeOrId` həm rəqəmsal Skyhill ID (`4569..4598`, məs: `4578` = SHIRVAN, `4579` = SAQI, `4580` = ELIXIR, `4581` = STRIKE, `4582` = Otaq xidməti), həm də `Guid` ola bilər.
+
+#### D. Məhsul / Otaq / Məlumat Kartının Detal Səhifəsi (`/hotel/p/{itemCodeOrId}`)
+* **Endpoint:** `GET /api/public/{slug}/catalog/items/{itemCodeOrId}?lang=az`
+  *(Alternativ alias: `GET /api/public/{slug}/hotel/p/{itemCodeOrId}?lang=az`)*
+  `itemCodeOrId` həm rəqəmsal Skyhill ID (`43107..43234`, məs: `43219` = Canlı caz axşamı, `43224` = Rəsədxana gecə turu), həm də `Guid` ola bilər.
+  Hər bir elementdə `actionType` (`"phone" | "whatsapp" | "email" | "map"`), `actionValue`, `actionUrl`, `isOrderable` (`!infoOnly`), `iconKey` və üçdilli `titleTr`/`descriptionTr` mövcuddur.
+
+#### E. Səbət və Otağa / Masaya Sifariş Göndərmək (`/cart`)
+Qonaq `isOrderable: true` olan yeməkləri və ya spa xidmətlərini səbətə yığıb təsdiqlədikdə:
+* **Endpoint:** `POST /api/public/{slug}/orders`
+* **Request Body (`SubmitOrderRequestDto`):**
+  ```json
+  {
+    "orderType": 1, // 1=RoomService, 2=RestaurantTable, 3=SpaReservation, 4=ActivityBooking
+    "roomOrTableNumber": "304",
+    "guestName": "Elmir Qasımov",
+    "phoneNumber": "+994501112233",
+    "notes": "Zəhmət olmasa çörək isti olsun.",
+    "items": [
+      {
+        "catalogItemId": "e1a2b3c4-...",
+        "itemTitle": "Aşpazın təklifi — quzu qabırğası",
+        "quantity": 1,
+        "unitPrice": 34.00,
+        "specialInstruction": "Az acılı"
+      },
+      {
+        "catalogItemId": "f5d6e7a8-...",
+        "itemTitle": "Şah plov",
+        "quantity": 1,
+        "unitPrice": 28.00
+      }
+    ]
+  }
+  ```
+* *Qeyd:* Sifariş yaradılan kimi avtomatik `ORD-MMDD-XXXX` nömrəsi alır, **Resepşn panelinə**, otelin **Telegram qrupuna** (detallı çek formatında) və **E-poçtuna** göndərilir.
+
+#### E. Daxili 5 Ulduz və Emoji Qiymətləndirməsi (`/review`)
+* **Endpoint:** `POST /api/public/{slug}/reviews`
+* **Request Body (`SubmitReviewRequestDto`):**
+  ```json
+  {
+    "rating": 5, // 1..5 ulduz
+    "guestName": "Elmir Qasımov",
+    "roomNumber": "304",
+    "phoneNumber": "+994501112233",
+    "department": "Restaurant",
+    "comment": "SHIRVAN restoranında Şah plov mükəmməl idi!"
+  }
+  ```
+* *Ağıllı Bildiriş:* Əgər `rating <= 3` olarsa, otel rəhbərliyinə Telegram-da `⚠️ TƏCİLİ: Mənfi Qonaq Rəyi` xəbərdarlığı gedir.
+
+#### F. Dinamik PWA Manifest (`/manifest.webmanifest`)
+* **Endpoint:** `GET /api/public/{slug}/manifest.webmanifest`
+* Hər otel üçün fərdi rəng, ad, loqo və qısa yollar (`/favourites`, `/cart`) ehtiva edən `application/manifest+json` qaytarır.
+
+#### G. Otel Admin Paneli üçün Yeni CRUD Endpoint-ləri (`/api/hotel-admin/*`)
+* **Stories:** `GET/POST /api/hotel-admin/stories`, `PUT/DELETE /api/hotel-admin/stories/{id}`, `POST /api/hotel-admin/stories/{id}/image`
+* **Hubs (6 Əsas Plitə):** `GET/POST /api/hotel-admin/hubs`, `PUT/DELETE /api/hotel-admin/hubs/{id}`, `POST /api/hotel-admin/hubs/{id}/cover`
+* **Kataloq Kateqoriyaları (Restoran/Spa/Bölmə):** `GET/POST /api/hotel-admin/catalog/categories?hubId=...`, `PUT/DELETE /api/hotel-admin/catalog/categories/{id}`, `POST /api/hotel-admin/catalog/categories/{id}/image`
+* **Kataloq Elementləri (Yemək/Spa/Otaq/Məlumat):** `GET/POST /api/hotel-admin/catalog/items?hubId=...&categoryId=...`, `PUT/DELETE /api/hotel-admin/catalog/items/{id}`, `POST /api/hotel-admin/catalog/items/{id}/image`
+* **Səbət Sifarişləri (Orders):** `GET /api/hotel-admin/orders?status=1` və `PATCH /api/hotel-admin/orders/{id}/status` (`{ "status": 3 }`)
+* **Qonaq Rəyləri (Reviews):** `GET /api/hotel-admin/reviews?isResolved=false` və `PATCH /api/hotel-admin/reviews/{id}/resolve`
+* **Şöbə Əlaqələri (Departments):** `GET/POST /api/hotel-admin/departments`, `PUT/DELETE /api/hotel-admin/departments/{id}`
+
+---
+
 ## 🛎️ 5. Ekran 2: Resepşn Masası (Reception Desk Dashboard)
 
 Resepşn əməkdaşlarının qonaqlardan daxil olan müraciətləri tez görüb dərhal reaksiya verməsi üçün nəzərdə tutulub.
@@ -287,10 +394,131 @@ Otel rəhbərliyinin öz portalını və məzmununu idarə etdiyi sahədir.
 ### 6.6. Statistika və Analitika
 * **İcmal Məlumatlar:** `GET /api/hotel-admin/analytics/summary`
   Qaytarılan göstəricilər:
-  - `totalViews`: Qonaq portalına baxış sayı
+  - `totalScans`: Qonaq portalına baxış sayı
   - `totalLinkClicks`: Linklərə edilən kliklərin cəmi
   - `totalInquiries`: Resepşnə daxil olan müraciətlər
+  - `totalOrders`: Səbət sifarişlərinin sayı
+  - `totalOrderRevenue`: Sifarişlərdən ümumi dövriyyə (₼)
+  - `totalReviews` & `averageRating`: Qonaq rəylərinin sayı və orta ulduz balı (məs: `4.9`)
   - `deviceBreakdown`: Mobil vs Kompüter faizləri
+
+### 6.7. Skyhill Kataloqu İdarəetməsi (Otel Admin Paneli — Tam CRUD)
+
+Otel admini öz panelindən Skyhill-dəki bütün elementləri (Stories, 6 Hub, Restoran/Spa kateqoriyaları, Qiymətli yeməklər, Otaq növləri, Şöbə nömrələri) yarada, yeniləyə, şəklini yükləyə və silə bilir:
+
+#### A. Yuxarı "Stories / Highlights" İdarəetməsi
+* **Siyahı:** `GET /api/hotel-admin/stories`
+* **Yeni Story Yarat:** `POST /api/hotel-admin/stories`
+  ```json
+  {
+    "titleAz": "Spa −20%",
+    "titleEn": "Spa −20%",
+    "titleRu": "Спа −20%",
+    "descriptionAz": "Həftəiçi bütün masajlara 20% endirim!",
+    "badgeText": "Endirim",
+    "actionUrl": "spa",
+    "displayOrder": 1,
+    "isActive": true
+  }
+  ```
+* **Şəkil Yüklə:** `POST /api/hotel-admin/stories/{id}/image` (`multipart/form-data`, `file`)
+* **Redaktə / Sil:** `PUT /api/hotel-admin/stories/{id}` | `DELETE /api/hotel-admin/stories/{id}`
+
+#### B. 6 Əsas Bölmə Plitəsi (Hubs) İdarəetməsi
+* **Siyahı:** `GET /api/hotel-admin/hubs`
+* **Yeni Hub Yarat:** `POST /api/hotel-admin/hubs`
+  ```json
+  {
+    "code": "spa",
+    "hubType": 3, // 1=HotelInfo, 2=FoodAndBeverage, 3=SpaAndWellness, 4=Entertainment, 5=Contacts, 6=DailySpecials
+    "kickerAz": "MARAL",
+    "titleAz": "Spa və sağlamlıq",
+    "titleEn": "Spa & Wellness",
+    "titleRu": "Спа и велнес",
+    "iconKey": "sparkles",
+    "displayOrder": 3,
+    "isActive": true
+  }
+  ```
+* **Qapaq Şəkli Yüklə:** `POST /api/hotel-admin/hubs/{id}/cover` (`multipart/form-data`, `file`)
+* **Redaktə / Sil:** `PUT /api/hotel-admin/hubs/{id}` | `DELETE /api/hotel-admin/hubs/{id}`
+
+#### C. Məkanlar və Alt-Kateqoriyalar (Restoranlar, Barlar, Spa Bölmələri, Otaqlar)
+* **Siyahı:** `GET /api/hotel-admin/catalog/categories?hubId={hubId}`
+* **Yeni Məkan / Kateqoriya Yarat:** `POST /api/hotel-admin/catalog/categories`
+  ```json
+  {
+    "hubId": "d140e691-...",
+    "parentCategoryId": null,
+    "titleAz": "SHIRVAN",
+    "titleEn": "SHIRVAN",
+    "titleRu": "SHIRVAN",
+    "subtitleAz": "Restoran və teras · Bütün gün",
+    "workingHours": "07:30–23:30",
+    "internalExtension": "3",
+    "iconKey": "restaurant",
+    "layoutStyle": "list",
+    "displayOrder": 1,
+    "isActive": true
+  }
+  ```
+* **Şəkil Yüklə:** `POST /api/hotel-admin/catalog/categories/{id}/image` (`multipart/form-data`, `file`)
+* **Redaktə / Sil:** `PUT /api/hotel-admin/catalog/categories/{id}` | `DELETE /api/hotel-admin/catalog/categories/{id}`
+
+#### D. Məhsullar, Yeməklər, Spa Xidmətləri, Otaq Növləri və Məlumat Kartları (`CatalogItems`)
+* **Siyahı:** `GET /api/hotel-admin/catalog/items?hubId={hubId}&categoryId={categoryId}`
+* **Yeni Yemək / Xidmət / Otaq Yarat:** `POST /api/hotel-admin/catalog/items`
+  ```json
+  {
+    "hubId": "d140e691-...",
+    "categoryId": "a230f112-...",
+    "itemType": 2, // 1=InfoArticle, 2=MenuProduct, 3=SpaService, 4=ActivityOffer, 5=SpecialDeal
+    "titleAz": "Aşpazın təklifi — quzu qabırğası",
+    "titleEn": "Chef's Special — Lamb Ribs",
+    "titleRu": "Предложение шефа — бараньи рёбрышки",
+    "descriptionAz": "Dağ kəklikotusu ilə marinadlanmış təndir quzu qabırğası...",
+    "badgeAz": "Aşpazın seçimi",
+    "filterTag": "food",
+    "price": 34.00,
+    "oldPrice": null,
+    "currency": "₼",
+    "portionOrDuration": "380 qr",
+    "bulletPointsAz": "Təndirdə bişirilmiş\nKözlənmiş tərəvəzlər daxildir",
+    "isOrderable": true, // true olduqda qonaq səbətə əlavə edə bilir
+    "isFeaturedInDailySpecials": true, // true olduqda "Günün təklifi" bölməsində də çıxır
+    "actionLabelAz": null,
+    "actionUrl": null,
+    "displayOrder": 1,
+    "isActive": true
+  }
+  ```
+* **Məhsul Şəkli Yüklə:** `POST /api/hotel-admin/catalog/items/{id}/image` (`multipart/form-data`, `file`)
+* **Redaktə / Sil:** `PUT /api/hotel-admin/catalog/items/{id}` | `DELETE /api/hotel-admin/catalog/items/{id}`
+
+#### E. Şöbə Əlaqələri (`Departments`)
+* **Siyahı:** `GET /api/hotel-admin/departments`
+* **Yeni Şöbə Nömrəsi Yarat:** `POST /api/hotel-admin/departments`
+  ```json
+  {
+    "titleAz": "Otaq xidməti (Room Service)",
+    "titleEn": "In-Room Dining",
+    "subtitleAz": "24 saat yemək və içki sifarişi",
+    "phoneNumber": "+994125551234",
+    "internalExtension": "3",
+    "whatsAppNumber": "+994505551234",
+    "workingHours": "24/7",
+    "iconKey": "bell",
+    "displayOrder": 2,
+    "isActive": true
+  }
+  ```
+* **Redaktə / Sil:** `PUT /api/hotel-admin/departments/{id}` | `DELETE /api/hotel-admin/departments/{id}`
+
+#### F. Səbət Sifarişləri və Qonaq Rəyləri (Resepşn & Admin üçün)
+* **Sifarişlərin Siyahısı:** `GET /api/hotel-admin/orders?status=1` (`1=New, 2=Accepted, 3=Preparing, 4=Completed, 5=Cancelled`)
+* **Sifariş Statusunu Dəyiş:** `PATCH /api/hotel-admin/orders/{id}/status` -> Body: `{ "status": 3 }`
+* **Qonaq Rəylərinin Siyahısı:** `GET /api/hotel-admin/reviews?isResolved=false`
+* **Rəyi Baxılmış İşarələ:** `PATCH /api/hotel-admin/reviews/{id}/resolve`
 
 ---
 
@@ -354,10 +582,14 @@ SaaS rəhbərliyinin otelləri və onların abunəliklərini tənzimlədiyi kabi
 
 ## 🧪 10. Test Giriş Məlumatları (Default Credentials)
 
-* **Otel Admin & Reception Hesabı:**
+* **Demo Otel 1 — Skyhill Pirgulu Hotel & Spa (Tam Skyhill Kataloqu ilə):**
+  - Email: `admin@skyhill.az`
+  - Şifrə: `Hotel123!`
+  - Otel Slugu: `skyhill` (`GET /api/public/skyhill`)
+* **Demo Otel 2 — Hotel & Resort (Həm PDF/Linklər, həm də Skyhill Kataloqu ilə):**
   - Email: `admin@hotelresort.com`
   - Şifrə: `Hotel123!`
-  - Otel Slugu: `hotel-resort`
+  - Otel Slugu: `hotel-resort` (`GET /api/public/hotel-resort`)
 * **SaaS SuperAdmin Hesabı:**
   - Email: `admin@hotelqr.com`
   - Şifrə: `SuperAdmin123!`

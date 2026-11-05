@@ -54,31 +54,47 @@ Verilənlər bazası işə düşərkən sistem tərəfindən avtomatik olaraq il
 - **Şifrə:** `SuperAdmin123!`
 - **Səlahiyyət:** Bütün otellərə nəzarət, yeni otel açmaq, abunəlikləri bloklamaq/aktivləşdirmək.
 
-### 2. Demo Otel ("Hotel & Resort") Admini:
+### 2. Demo Otel 1 ("Hotel & Resort") Admini:
 - **E-poçt:** `admin@hotelresort.com`
 - **Şifrə:** `Hotel123!`
 - **Slug:** `hotel-resort`
 - **Səlahiyyət:** Öz menyusunu, PDF menyularını, nömrələrini, QR kodlarını və gələn qonaq mesajlarını idarə etmək.
+
+### 3. Demo Otel 2 ("Sky Hill — Hotel & Spa") Admini:
+- **E-poçt:** `admin@skyhill.az`
+- **Şifrə:** `Hotel123!`
+- **Slug:** `skyhill`
+- **Səlahiyyət:** Skyhill strukturu (6 əsas Hub, SHIRVAN restoranı, SAQI Lounge, MARAL Spa, Qiymətli menyular, Səbət sifarişləri, Stories və 5 ulduzlu rəy sistemi) ilə tam təchiz olunmuş demo hesab.
 
 ---
 
 ## 📡 Əsas API Endpoint-ləri
 
 ### A. Qonaqlar üçün (Açıq / Anonim)
-- `GET /api/public/{slug}?lang=az` — Otelin rəqəmsal profilini və aktiv menyularını gətirir.
+- `GET /api/public/{slug}?lang=az` — Otelin rəqəmsal profilini, aktiv menyularını, **Stories**, **6 Əsas Hub**, **Günün təklifləri** və **Şöbə nömrələrini** gətirir.
+- `GET /api/public/{slug}/hubs/{hubCodeOrId}` *(və ya `/hotel/g/{hubCodeOrId}`)* — Seçilmiş Hub-ın (Otel məlumatı, Qida və içki, Spa, Əyləncə, Əlaqə, Günün təklifi) daxili məkanlarını və elementlərini gətirir.
+- `GET /api/public/{slug}/catalog/categories/{categoryId}` *(və ya `/hotel/c/{categoryId}`)* — Seçilmiş restoranın (SHIRVAN, SAQI Lounge) və ya Spa bölməsinin qiymətli menyusunu gətirir.
+- `GET /api/public/{slug}/catalog/items/{itemId}` *(və ya `/hotel/p/{itemId}`)* — Yemək, masaj, otaq növü və ya A–Z bələdçi kartının tam detal səhifəsi.
+- `POST /api/public/{slug}/orders` — Qonağın səbətdəki yemək və xidmətləri otağa/masaya sifariş etməsi (Telegram & E-poçt bildirişi ilə).
+- `POST /api/public/{slug}/reviews` — Qonağın 1–5 ulduz və emoji ilə daxili rəy göndərməsi.
+- `GET /api/public/{slug}/manifest.webmanifest` — Otel üçün dinamik PWA Manifest faylı.
 - `GET /api/public/{slug}/vcard` — Otelin nömrələrini birbaşa telefona kontakt kimi yazır.
 - `POST /api/public/{slug}/inquiries` — Qonağın əlaqə sorğusu göndərməsi.
 - `GET /api/r/{linkId}` — Menyu/flipbook linkinə klikləri qeydə alaraq hədəfə `302 Redirect` edir.
 
 ### B. Otel Admini üçün (`HotelAdmin`)
 - `GET /api/hotel-admin/profile` — Profil məlumatları.
-- `POST /api/hotel-admin/profile/logo` — Loqo yükləmək.
-- `POST /api/hotel-admin/profile/cover` — Qapaq şəkli yükləmək.
-- `GET /api/hotel-admin/categories` & `POST /api/hotel-admin/categories` — Kateqoriyalar.
-- `POST /api/hotel-admin/links` — Yeni link və ya menyu əlavə etmək.
-- `POST /api/hotel-admin/links/{id}/upload-file` — PDF menyu yükləmək.
+- `POST /api/hotel-admin/profile/logo` & `POST /api/hotel-admin/profile/cover` — Loqo və qapaq şəkli yükləmək.
+- `GET/POST/PUT/DELETE /api/hotel-admin/stories` — Yuxarı "Stories / Highlights" idarəetməsi.
+- `GET/POST/PUT/DELETE /api/hotel-admin/hubs` — 6 Əsas Hub idarəetməsi.
+- `GET/POST/PUT/DELETE /api/hotel-admin/catalog/categories` — Restoranlar, Spa bölmələri və kateqoriyalar.
+- `GET/POST/PUT/DELETE /api/hotel-admin/catalog/items` — Qiymətli yeməklər, masajlar, otaqlar və məlumat kartları.
+- `GET /api/hotel-admin/orders` & `PATCH /api/hotel-admin/orders/{id}/status` — Gələn səbət sifarişləri (Room Service / Masa).
+- `GET /api/hotel-admin/reviews` & `PATCH /api/hotel-admin/reviews/{id}/resolve` — Qonaq rəyləri və reytinqlər.
+- `GET/POST/PUT/DELETE /api/hotel-admin/departments` — Şöbə daxili nömrələri.
+- `GET /api/hotel-admin/categories` & `POST /api/hotel-admin/links` — PDF menyu və keçidlər.
 - `GET /api/hotel-admin/qr/png` & `GET /api/hotel-admin/qr/svg` — Çap üçün vektor və PNG QR kod yükləmək.
-- `GET /api/hotel-admin/analytics/summary` — Oxunma və klik statistikası.
+- `GET /api/hotel-admin/analytics/summary` — Oxunma, klik, sifariş dövriyyəsi və orta reytinq statistikası.
 - `GET /api/hotel-admin/inquiries` — Gələn qonaq mesajları.
 
 ### C. Super Admin üçün (`SuperAdmin`)

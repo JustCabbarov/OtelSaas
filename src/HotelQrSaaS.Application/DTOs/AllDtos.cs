@@ -83,6 +83,12 @@ public record SuperAdminDashboardDto(
 #endregion
 
 #region HotelAdmin DTOs
+public record LocalizedTextDto(
+    string? Az,
+    string? En,
+    string? Ru
+);
+
 public record HotelProfileDto(
     Guid Id,
     string Name,
@@ -103,7 +109,24 @@ public record HotelProfileDto(
     string? MapUrl,
     bool IsActive,
     SubscriptionStatus SubscriptionStatus,
-    DateTime? SubscriptionEndDate
+    DateTime? SubscriptionEndDate,
+    string? SubtitleAz = null,
+    string? SubtitleEn = null,
+    string? SubtitleRu = null,
+    int? StarRating = 5,
+    string? TaglineAz = null,
+    string? TaglineEn = null,
+    string? TaglineRu = null,
+    string CurrencyCode = "₼",
+    decimal ServiceFeePercent = 0,
+    string ThemePreset = "otel",
+    string ThemeStyle = "yumsaq",
+    string? InstagramUrl = null,
+    string? FacebookUrl = null,
+    string? YoutubeUrl = null,
+    string? TikTokUrl = null,
+    string? TripAdvisorUrl = null,
+    string? BookingUrl = null
 );
 
 public record UpdateHotelProfileDto(
@@ -119,7 +142,24 @@ public record UpdateHotelProfileDto(
     string? WhatsApp,
     string? Telegram,
     string? Address,
-    string? MapUrl
+    string? MapUrl,
+    string? SubtitleAz = null,
+    string? SubtitleEn = null,
+    string? SubtitleRu = null,
+    int? StarRating = 5,
+    string? TaglineAz = null,
+    string? TaglineEn = null,
+    string? TaglineRu = null,
+    string CurrencyCode = "₼",
+    decimal ServiceFeePercent = 0,
+    string ThemePreset = "otel",
+    string ThemeStyle = "yumsaq",
+    string? InstagramUrl = null,
+    string? FacebookUrl = null,
+    string? YoutubeUrl = null,
+    string? TikTokUrl = null,
+    string? TripAdvisorUrl = null,
+    string? BookingUrl = null
 );
 
 public record NotificationSettingsDto(
@@ -265,7 +305,11 @@ public record AnalyticsSummaryDto(
     int TotalInquiries,
     long TotalLinkClicks,
     List<LinkClickStatDto> TopLinks,
-    Dictionary<string, int> DeviceBreakdown
+    Dictionary<string, int> DeviceBreakdown,
+    int TotalOrders = 0,
+    decimal TotalOrderRevenue = 0,
+    int TotalReviews = 0,
+    double AverageRating = 5.0
 );
 
 public record LinkClickStatDto(Guid LinkId, string Title, long ClickCount);
@@ -326,6 +370,418 @@ public record PublicActivityDto(
     string? Category,
     string? ImageUrl
 );
+
+// --- Skyhill New Modules: Stories, Hubs, Catalog, Orders, Reviews, Departments ---
+
+public record HotelStoryDto(
+    Guid Id,
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? DescriptionAz,
+    string? DescriptionEn,
+    string? DescriptionRu,
+    string? ImageUrl,
+    string? BannerImageUrl,
+    string? BadgeText,
+    string? ActionUrl,
+    int DisplayOrder,
+    bool IsActive,
+    int? ExternalId = null,
+    string? VideoUrl = null,
+    string? ButtonTextAz = null,
+    string? ButtonTextEn = null,
+    string? ButtonTextRu = null
+);
+
+public record CreateHotelStoryDto(
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? DescriptionAz,
+    string? DescriptionEn,
+    string? DescriptionRu,
+    string? ImageUrl,
+    string? BannerImageUrl,
+    string? BadgeText,
+    string? ActionUrl,
+    int DisplayOrder = 0,
+    bool IsActive = true,
+    int? ExternalId = null,
+    string? VideoUrl = null,
+    string? ButtonTextAz = null,
+    string? ButtonTextEn = null,
+    string? ButtonTextRu = null
+);
+
+public record UpdateHotelStoryDto(
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? DescriptionAz,
+    string? DescriptionEn,
+    string? DescriptionRu,
+    string? ImageUrl,
+    string? BannerImageUrl,
+    string? BadgeText,
+    string? ActionUrl,
+    int DisplayOrder,
+    bool IsActive,
+    int? ExternalId = null,
+    string? VideoUrl = null,
+    string? ButtonTextAz = null,
+    string? ButtonTextEn = null,
+    string? ButtonTextRu = null
+);
+
+public record HotelHubDto(
+    Guid Id,
+    string Code,
+    HubType HubType,
+    string? KickerAz,
+    string? KickerEn,
+    string? KickerRu,
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? SubtitleAz,
+    string? SubtitleEn,
+    string? SubtitleRu,
+    string? IconKey,
+    string? CoverImageUrl,
+    int DisplayOrder,
+    bool IsActive,
+    int? ExternalId = null,
+    string DisplayMode = "categories"
+);
+
+public record CreateHotelHubDto(
+    string Code,
+    HubType HubType,
+    string? KickerAz,
+    string? KickerEn,
+    string? KickerRu,
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? SubtitleAz,
+    string? SubtitleEn,
+    string? SubtitleRu,
+    string? IconKey,
+    string? CoverImageUrl,
+    int DisplayOrder = 0,
+    bool IsActive = true,
+    int? ExternalId = null,
+    string DisplayMode = "categories"
+);
+
+public record UpdateHotelHubDto(
+    string Code,
+    HubType HubType,
+    string? KickerAz,
+    string? KickerEn,
+    string? KickerRu,
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? SubtitleAz,
+    string? SubtitleEn,
+    string? SubtitleRu,
+    string? IconKey,
+    string? CoverImageUrl,
+    int DisplayOrder,
+    bool IsActive,
+    int? ExternalId = null,
+    string DisplayMode = "categories"
+);
+
+public record CatalogCategoryDto(
+    Guid Id,
+    Guid HubId,
+    Guid? ParentCategoryId,
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? SubtitleAz,
+    string? SubtitleEn,
+    string? SubtitleRu,
+    string? ImageUrl,
+    string? IconKey,
+    string? WorkingHours,
+    string? InternalExtension,
+    string LayoutStyle,
+    int DisplayOrder,
+    bool IsActive,
+    int? ExternalId = null,
+    bool CollapseIfSingleItem = true
+);
+
+public record CreateCatalogCategoryDto(
+    Guid HubId,
+    Guid? ParentCategoryId,
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? SubtitleAz,
+    string? SubtitleEn,
+    string? SubtitleRu,
+    string? ImageUrl,
+    string? IconKey,
+    string? WorkingHours,
+    string? InternalExtension,
+    string LayoutStyle = "list",
+    int DisplayOrder = 0,
+    bool IsActive = true,
+    int? ExternalId = null,
+    bool CollapseIfSingleItem = true
+);
+
+public record UpdateCatalogCategoryDto(
+    Guid HubId,
+    Guid? ParentCategoryId,
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? SubtitleAz,
+    string? SubtitleEn,
+    string? SubtitleRu,
+    string? ImageUrl,
+    string? IconKey,
+    string? WorkingHours,
+    string? InternalExtension,
+    string LayoutStyle,
+    int DisplayOrder,
+    bool IsActive,
+    int? ExternalId = null,
+    bool CollapseIfSingleItem = true
+);
+
+public record CatalogItemDto(
+    Guid Id,
+    Guid HubId,
+    Guid? CategoryId,
+    CatalogItemType ItemType,
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? DescriptionAz,
+    string? DescriptionEn,
+    string? DescriptionRu,
+    string? BadgeAz,
+    string? BadgeEn,
+    string? BadgeRu,
+    string? FilterTag,
+    decimal? Price,
+    decimal? OldPrice,
+    string Currency,
+    string? PortionOrDuration,
+    string? BulletPointsAz,
+    string? BulletPointsEn,
+    string? BulletPointsRu,
+    string? ImageUrl,
+    bool IsOrderable,
+    bool IsFeaturedInDailySpecials,
+    string? ActionLabelAz,
+    string? ActionLabelEn,
+    string? ActionLabelRu,
+    string? ActionUrl,
+    int DisplayOrder,
+    bool IsActive,
+    int? ExternalId = null,
+    string? SubtitleAz = null,
+    string? SubtitleEn = null,
+    string? SubtitleRu = null,
+    string? IconKey = null,
+    string? ActionType = null,
+    string? ActionValue = null,
+    decimal DiscountPercent = 0,
+    decimal CostPrice = 0,
+    int? PrepTimeMinutes = null,
+    bool NoServiceFee = false,
+    string? ModifierGroupsJson = null
+);
+
+public record CreateCatalogItemDto(
+    Guid HubId,
+    Guid? CategoryId,
+    CatalogItemType ItemType,
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? DescriptionAz,
+    string? DescriptionEn,
+    string? DescriptionRu,
+    string? BadgeAz,
+    string? BadgeEn,
+    string? BadgeRu,
+    string? FilterTag,
+    decimal? Price,
+    decimal? OldPrice,
+    string Currency = "₼",
+    string? PortionOrDuration = null,
+    string? BulletPointsAz = null,
+    string? BulletPointsEn = null,
+    string? BulletPointsRu = null,
+    string? ImageUrl = null,
+    bool IsOrderable = false,
+    bool IsFeaturedInDailySpecials = false,
+    string? ActionLabelAz = null,
+    string? ActionLabelEn = null,
+    string? ActionLabelRu = null,
+    string? ActionUrl = null,
+    int DisplayOrder = 0,
+    bool IsActive = true,
+    int? ExternalId = null,
+    string? SubtitleAz = null,
+    string? SubtitleEn = null,
+    string? SubtitleRu = null,
+    string? IconKey = null,
+    string? ActionType = null,
+    string? ActionValue = null,
+    decimal DiscountPercent = 0,
+    decimal CostPrice = 0,
+    int? PrepTimeMinutes = null,
+    bool NoServiceFee = false,
+    string? ModifierGroupsJson = null
+);
+
+public record UpdateCatalogItemDto(
+    Guid HubId,
+    Guid? CategoryId,
+    CatalogItemType ItemType,
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? DescriptionAz,
+    string? DescriptionEn,
+    string? DescriptionRu,
+    string? BadgeAz,
+    string? BadgeEn,
+    string? BadgeRu,
+    string? FilterTag,
+    decimal? Price,
+    decimal? OldPrice,
+    string Currency,
+    string? PortionOrDuration,
+    string? BulletPointsAz,
+    string? BulletPointsEn,
+    string? BulletPointsRu,
+    string? ImageUrl,
+    bool IsOrderable,
+    bool IsFeaturedInDailySpecials,
+    string? ActionLabelAz,
+    string? ActionLabelEn,
+    string? ActionLabelRu,
+    string? ActionUrl,
+    int DisplayOrder,
+    bool IsActive,
+    int? ExternalId = null,
+    string? SubtitleAz = null,
+    string? SubtitleEn = null,
+    string? SubtitleRu = null,
+    string? IconKey = null,
+    string? ActionType = null,
+    string? ActionValue = null,
+    decimal DiscountPercent = 0,
+    decimal CostPrice = 0,
+    int? PrepTimeMinutes = null,
+    bool NoServiceFee = false,
+    string? ModifierGroupsJson = null
+);
+
+public record GuestOrderItemDto(
+    Guid Id,
+    Guid? CatalogItemId,
+    string ItemTitle,
+    int Quantity,
+    decimal UnitPrice,
+    decimal LineTotal,
+    string? SpecialInstruction
+);
+
+public record GuestOrderDto(
+    Guid Id,
+    string OrderNumber,
+    OrderType OrderType,
+    string RoomOrTableNumber,
+    string GuestName,
+    string PhoneNumber,
+    string? Notes,
+    decimal TotalAmount,
+    string Currency,
+    OrderStatus Status,
+    bool IsEmailSent,
+    bool IsTelegramSent,
+    DateTime CreatedAtUtc,
+    List<GuestOrderItemDto> Items
+);
+
+public record UpdateOrderStatusDto(OrderStatus Status);
+
+public record GuestReviewDto(
+    Guid Id,
+    int Rating,
+    string? GuestName,
+    string? RoomNumber,
+    string? PhoneNumber,
+    string? Department,
+    string? Comment,
+    bool IsResolved,
+    bool IsTelegramAlertSent,
+    DateTime CreatedAtUtc
+);
+
+public record DepartmentContactDto(
+    Guid Id,
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? SubtitleAz,
+    string? SubtitleEn,
+    string? SubtitleRu,
+    string? PhoneNumber,
+    string? InternalExtension,
+    string? WhatsAppNumber,
+    string? Email,
+    string? WorkingHours,
+    string? IconKey,
+    int DisplayOrder,
+    bool IsActive
+);
+
+public record CreateDepartmentContactDto(
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? SubtitleAz,
+    string? SubtitleEn,
+    string? SubtitleRu,
+    string? PhoneNumber,
+    string? InternalExtension,
+    string? WhatsAppNumber,
+    string? Email,
+    string? WorkingHours,
+    string? IconKey,
+    int DisplayOrder = 0,
+    bool IsActive = true
+);
+
+public record UpdateDepartmentContactDto(
+    string TitleAz,
+    string? TitleEn,
+    string? TitleRu,
+    string? SubtitleAz,
+    string? SubtitleEn,
+    string? SubtitleRu,
+    string? PhoneNumber,
+    string? InternalExtension,
+    string? WhatsAppNumber,
+    string? Email,
+    string? WorkingHours,
+    string? IconKey,
+    int DisplayOrder,
+    bool IsActive
+);
 #endregion
 
 #region Public Portal DTOs
@@ -344,7 +800,240 @@ public record PublicHotelPortalDto(
     string? Address,
     string? MapUrl,
     List<PublicCategoryDto> Categories,
-    List<PublicActivityDto>? Activities = null
+    List<PublicActivityDto>? Activities = null,
+    string? Subtitle = null,
+    int? StarRating = 5,
+    List<PublicStoryDto>? Stories = null,
+    List<PublicHubSummaryDto>? Hubs = null,
+    List<PublicCatalogItemDto>? DailySpecials = null,
+    List<PublicDepartmentContactDto>? DepartmentContacts = null,
+    string? Tagline = null,
+    LocalizedTextDto? SubtitleTr = null,
+    LocalizedTextDto? TaglineTr = null,
+    LocalizedTextDto? BioTr = null,
+    string CurrencyCode = "₼",
+    decimal ServiceFeePercent = 0,
+    string ThemePreset = "otel",
+    string ThemeStyle = "yumsaq",
+    string? InstagramUrl = null,
+    string? FacebookUrl = null,
+    string? YoutubeUrl = null,
+    string? TikTokUrl = null,
+    string? TripAdvisorUrl = null,
+    string? BookingUrl = null
+);
+
+public record PublicStoryDto(
+    Guid Id,
+    string Title,
+    string? Description,
+    string? ImageUrl,
+    string? BannerImageUrl,
+    string? BadgeText,
+    string? ActionUrl,
+    int DisplayOrder,
+    int? ExternalId = null,
+    string? VideoUrl = null,
+    string? ButtonText = null,
+    LocalizedTextDto? TitleTr = null,
+    LocalizedTextDto? CaptionTr = null,
+    LocalizedTextDto? ButtonTr = null
+);
+
+public record PublicHubSummaryDto(
+    Guid Id,
+    string Code,
+    HubType HubType,
+    string? Kicker,
+    string Title,
+    string? Subtitle,
+    string? IconKey,
+    string? CoverImageUrl,
+    int DisplayOrder,
+    int? ExternalId = null,
+    string DisplayMode = "categories",
+    LocalizedTextDto? KickerTr = null,
+    LocalizedTextDto? TitleTr = null,
+    LocalizedTextDto? SubtitleTr = null
+);
+
+public record PublicHubDetailDto(
+    Guid Id,
+    string Code,
+    HubType HubType,
+    string? Kicker,
+    string Title,
+    string? Subtitle,
+    string? IconKey,
+    string? CoverImageUrl,
+    List<PublicCatalogCategoryDto> Categories,
+    List<PublicCatalogItemDto> DirectItems,
+    List<PublicDepartmentContactDto>? DepartmentContacts = null,
+    int? ExternalId = null,
+    string DisplayMode = "categories",
+    LocalizedTextDto? KickerTr = null,
+    LocalizedTextDto? TitleTr = null,
+    LocalizedTextDto? SubtitleTr = null
+);
+
+public record PublicCatalogCategoryDto(
+    Guid Id,
+    Guid HubId,
+    Guid? ParentCategoryId,
+    string Title,
+    string? Subtitle,
+    string? ImageUrl,
+    string? IconKey,
+    string? WorkingHours,
+    string? InternalExtension,
+    string LayoutStyle,
+    int DisplayOrder,
+    int ItemsCount = 0,
+    int? ExternalId = null,
+    bool CollapseIfSingleItem = true,
+    Guid? SingleItemId = null,
+    int? SingleItemExternalId = null,
+    string? TargetUrl = null,
+    string? ActionType = null,
+    string? ActionValue = null,
+    LocalizedTextDto? TitleTr = null,
+    LocalizedTextDto? SubtitleTr = null
+);
+
+public record PublicCatalogCategoryDetailDto(
+    Guid Id,
+    Guid HubId,
+    string HubTitle,
+    string Title,
+    string? Subtitle,
+    string? ImageUrl,
+    string? WorkingHours,
+    string? InternalExtension,
+    string LayoutStyle,
+    List<PublicCatalogCategoryDto> SubCategories,
+    List<PublicCatalogItemDto> Items,
+    int? ExternalId = null,
+    int? HubExternalId = null,
+    string? HubCode = null,
+    LocalizedTextDto? TitleTr = null,
+    LocalizedTextDto? SubtitleTr = null,
+    LocalizedTextDto? HubTitleTr = null
+);
+
+public record PublicCatalogItemDto(
+    Guid Id,
+    Guid HubId,
+    Guid? CategoryId,
+    CatalogItemType ItemType,
+    string Title,
+    string? Description,
+    string? Badge,
+    string? FilterTag,
+    decimal? Price,
+    decimal? OldPrice,
+    string Currency,
+    string? PortionOrDuration,
+    List<string> BulletPoints,
+    string? ImageUrl,
+    bool IsOrderable,
+    bool IsFeaturedInDailySpecials,
+    string? ActionLabel,
+    string? ActionUrl,
+    int DisplayOrder,
+    int? ExternalId = null,
+    int? CategoryExternalId = null,
+    int? HubExternalId = null,
+    string? Subtitle = null,
+    string? IconKey = null,
+    string? ActionType = null,
+    string? ActionValue = null,
+    decimal DiscountPercent = 0,
+    decimal CostPrice = 0,
+    int? PrepTimeMinutes = null,
+    bool NoServiceFee = false,
+    LocalizedTextDto? TitleTr = null,
+    LocalizedTextDto? SubtitleTr = null,
+    LocalizedTextDto? DescriptionTr = null,
+    LocalizedTextDto? BadgeTr = null,
+    LocalizedTextDto? CategoryNameTr = null,
+    LocalizedTextDto? ActionLabelTr = null,
+    List<object>? ModifierGroups = null
+);
+
+public record PublicDepartmentContactDto(
+    Guid Id,
+    string Title,
+    string? Subtitle,
+    string? PhoneNumber,
+    string? InternalExtension,
+    string? WhatsAppNumber,
+    string? Email,
+    string? WorkingHours,
+    string? IconKey,
+    int DisplayOrder,
+    LocalizedTextDto? TitleTr = null,
+    LocalizedTextDto? SubtitleTr = null
+);
+
+public record UniPosProductDto(
+    int Id,
+    Guid GuidId,
+    string Name,
+    LocalizedTextDto NameTr,
+    decimal Price,
+    decimal CostPrice,
+    int? Timer,
+    string? Image,
+    string? Ingredient,
+    decimal Discount,
+    bool NoServiceFee,
+    int CategoryId,
+    Guid? CategoryGuidId,
+    string CategoryName,
+    LocalizedTextDto CategoryNameTr,
+    int Ordering,
+    string? QrIcon,
+    LocalizedTextDto QrBadge,
+    string? QrActionType,
+    string? QrActionValue,
+    bool InfoOnly,
+    List<object> ModifierGroups
+);
+
+public record PublicFullCatalogDto(
+    string Restaurant,
+    decimal ServiceFee,
+    string Currency,
+    List<UniPosProductDto> Products,
+    List<PublicCatalogCategoryDto> Categories,
+    List<PublicHubSummaryDto> Hubs,
+    List<PublicStoryDto> Stories
+);
+
+public record SubmitOrderItemRequestDto(
+    Guid? CatalogItemId,
+    string ItemTitle,
+    int Quantity,
+    decimal UnitPrice,
+    string? SpecialInstruction = null
+);
+
+public record SubmitOrderRequestDto(
+    OrderType OrderType,
+    string RoomOrTableNumber,
+    string GuestName,
+    string PhoneNumber,
+    string? Notes,
+    List<SubmitOrderItemRequestDto> Items
+);
+
+public record SubmitReviewRequestDto(
+    int Rating,
+    string? GuestName,
+    string? RoomNumber,
+    string? PhoneNumber,
+    string? Department,
+    string? Comment
 );
 
 public record PublicCategoryDto(

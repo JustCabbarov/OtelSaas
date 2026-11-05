@@ -394,5 +394,343 @@ public class HotelAdminController : ControllerBase
         return Ok(ApiResponse<bool>.Ok(isActive, isActive ? "Fəaliyyət aktiv edildi." : "Fəaliyyət deaktiv edildi."));
     }
     #endregion
+
+    #region Stories (Top Highlights Bar)
+    [HttpGet("stories")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<HotelStoryDto>>>> GetStories(
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.GetStoriesAsync(targetId, cancellationToken);
+        return Ok(ApiResponse<IReadOnlyList<HotelStoryDto>>.Ok(result));
+    }
+
+    [HttpPost("stories")]
+    public async Task<ActionResult<ApiResponse<HotelStoryDto>>> CreateStory(
+        [FromBody] CreateHotelStoryDto request,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.CreateStoryAsync(targetId, request, cancellationToken);
+        return Ok(ApiResponse<HotelStoryDto>.Ok(result, "Story uğurla yaradıldı."));
+    }
+
+    [HttpPut("stories/{id:guid}")]
+    public async Task<ActionResult<ApiResponse<HotelStoryDto>>> UpdateStory(
+        [FromRoute] Guid id,
+        [FromBody] UpdateHotelStoryDto request,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.UpdateStoryAsync(targetId, id, request, cancellationToken);
+        return Ok(ApiResponse<HotelStoryDto>.Ok(result, "Story yeniləndi."));
+    }
+
+    [HttpPost("stories/{id:guid}/image")]
+    public async Task<ActionResult<ApiResponse<string>>> UploadStoryImage(
+        [FromRoute] Guid id,
+        IFormFile file,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        if (file == null || file.Length == 0) throw new BadRequestException("Fayl seçilməyib.");
+        var targetId = GetTenantId(tenantId);
+        using var stream = file.OpenReadStream();
+        var url = await _hotelAdminService.UploadStoryImageAsync(targetId, id, stream, file.FileName, cancellationToken);
+        return Ok(ApiResponse<string>.Ok(url, "Şəkil yükləndi."));
+    }
+
+    [HttpDelete("stories/{id:guid}")]
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteStory(
+        [FromRoute] Guid id,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        await _hotelAdminService.DeleteStoryAsync(targetId, id, cancellationToken);
+        return Ok(ApiResponse<bool>.Ok(true, "Story silindi."));
+    }
+    #endregion
+
+    #region Hubs (6 Core Hotel Tiles)
+    [HttpGet("hubs")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<HotelHubDto>>>> GetHubs(
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.GetHubsAsync(targetId, cancellationToken);
+        return Ok(ApiResponse<IReadOnlyList<HotelHubDto>>.Ok(result));
+    }
+
+    [HttpPost("hubs")]
+    public async Task<ActionResult<ApiResponse<HotelHubDto>>> CreateHub(
+        [FromBody] CreateHotelHubDto request,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.CreateHubAsync(targetId, request, cancellationToken);
+        return Ok(ApiResponse<HotelHubDto>.Ok(result, "Əsas bölmə (Hub) yaradıldı."));
+    }
+
+    [HttpPut("hubs/{id:guid}")]
+    public async Task<ActionResult<ApiResponse<HotelHubDto>>> UpdateHub(
+        [FromRoute] Guid id,
+        [FromBody] UpdateHotelHubDto request,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.UpdateHubAsync(targetId, id, request, cancellationToken);
+        return Ok(ApiResponse<HotelHubDto>.Ok(result, "Əsas bölmə (Hub) yeniləndi."));
+    }
+
+    [HttpPost("hubs/{id:guid}/cover")]
+    public async Task<ActionResult<ApiResponse<string>>> UploadHubCover(
+        [FromRoute] Guid id,
+        IFormFile file,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        if (file == null || file.Length == 0) throw new BadRequestException("Fayl seçilməyib.");
+        var targetId = GetTenantId(tenantId);
+        using var stream = file.OpenReadStream();
+        var url = await _hotelAdminService.UploadHubCoverAsync(targetId, id, stream, file.FileName, cancellationToken);
+        return Ok(ApiResponse<string>.Ok(url, "Hub şəkli yükləndi."));
+    }
+
+    [HttpDelete("hubs/{id:guid}")]
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteHub(
+        [FromRoute] Guid id,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        await _hotelAdminService.DeleteHubAsync(targetId, id, cancellationToken);
+        return Ok(ApiResponse<bool>.Ok(true, "Hub silindi."));
+    }
+    #endregion
+
+    #region Catalog Categories (Outlets & Sub-sections)
+    [HttpGet("catalog/categories")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<CatalogCategoryDto>>>> GetCatalogCategories(
+        [FromQuery] Guid? hubId,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.GetCatalogCategoriesAsync(targetId, hubId, cancellationToken);
+        return Ok(ApiResponse<IReadOnlyList<CatalogCategoryDto>>.Ok(result));
+    }
+
+    [HttpPost("catalog/categories")]
+    public async Task<ActionResult<ApiResponse<CatalogCategoryDto>>> CreateCatalogCategory(
+        [FromBody] CreateCatalogCategoryDto request,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.CreateCatalogCategoryAsync(targetId, request, cancellationToken);
+        return Ok(ApiResponse<CatalogCategoryDto>.Ok(result, "Kataloq kateqoriyası / məkanı yaradıldı."));
+    }
+
+    [HttpPut("catalog/categories/{id:guid}")]
+    public async Task<ActionResult<ApiResponse<CatalogCategoryDto>>> UpdateCatalogCategory(
+        [FromRoute] Guid id,
+        [FromBody] UpdateCatalogCategoryDto request,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.UpdateCatalogCategoryAsync(targetId, id, request, cancellationToken);
+        return Ok(ApiResponse<CatalogCategoryDto>.Ok(result, "Kataloq kateqoriyası yeniləndi."));
+    }
+
+    [HttpPost("catalog/categories/{id:guid}/image")]
+    public async Task<ActionResult<ApiResponse<string>>> UploadCatalogCategoryImage(
+        [FromRoute] Guid id,
+        IFormFile file,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        if (file == null || file.Length == 0) throw new BadRequestException("Fayl seçilməyib.");
+        var targetId = GetTenantId(tenantId);
+        using var stream = file.OpenReadStream();
+        var url = await _hotelAdminService.UploadCatalogCategoryImageAsync(targetId, id, stream, file.FileName, cancellationToken);
+        return Ok(ApiResponse<string>.Ok(url, "Şəkil yükləndi."));
+    }
+
+    [HttpDelete("catalog/categories/{id:guid}")]
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteCatalogCategory(
+        [FromRoute] Guid id,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        await _hotelAdminService.DeleteCatalogCategoryAsync(targetId, id, cancellationToken);
+        return Ok(ApiResponse<bool>.Ok(true, "Kateqoriya silindi."));
+    }
+    #endregion
+
+    #region Catalog Items (Priced Dishes, Spa Services, Rooms, Info Cards)
+    [HttpGet("catalog/items")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<CatalogItemDto>>>> GetCatalogItems(
+        [FromQuery] Guid? hubId,
+        [FromQuery] Guid? categoryId,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.GetCatalogItemsAsync(targetId, hubId, categoryId, cancellationToken);
+        return Ok(ApiResponse<IReadOnlyList<CatalogItemDto>>.Ok(result));
+    }
+
+    [HttpPost("catalog/items")]
+    public async Task<ActionResult<ApiResponse<CatalogItemDto>>> CreateCatalogItem(
+        [FromBody] CreateCatalogItemDto request,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.CreateCatalogItemAsync(targetId, request, cancellationToken);
+        return Ok(ApiResponse<CatalogItemDto>.Ok(result, "Məhsul / xidmət uğurla yaradıldı."));
+    }
+
+    [HttpPut("catalog/items/{id:guid}")]
+    public async Task<ActionResult<ApiResponse<CatalogItemDto>>> UpdateCatalogItem(
+        [FromRoute] Guid id,
+        [FromBody] UpdateCatalogItemDto request,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.UpdateCatalogItemAsync(targetId, id, request, cancellationToken);
+        return Ok(ApiResponse<CatalogItemDto>.Ok(result, "Məhsul / xidmət yeniləndi."));
+    }
+
+    [HttpPost("catalog/items/{id:guid}/image")]
+    public async Task<ActionResult<ApiResponse<string>>> UploadCatalogItemImage(
+        [FromRoute] Guid id,
+        IFormFile file,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        if (file == null || file.Length == 0) throw new BadRequestException("Fayl seçilməyib.");
+        var targetId = GetTenantId(tenantId);
+        using var stream = file.OpenReadStream();
+        var url = await _hotelAdminService.UploadCatalogItemImageAsync(targetId, id, stream, file.FileName, cancellationToken);
+        return Ok(ApiResponse<string>.Ok(url, "Məhsul şəkli yükləndi."));
+    }
+
+    [HttpDelete("catalog/items/{id:guid}")]
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteCatalogItem(
+        [FromRoute] Guid id,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        await _hotelAdminService.DeleteCatalogItemAsync(targetId, id, cancellationToken);
+        return Ok(ApiResponse<bool>.Ok(true, "Məhsul silindi."));
+    }
+    #endregion
+
+    #region Guest Cart Orders (Room Service / Table / Spa)
+    [HttpGet("orders")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<GuestOrderDto>>>> GetOrders(
+        [FromQuery] OrderStatus? status,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.GetOrdersAsync(targetId, status, cancellationToken);
+        return Ok(ApiResponse<IReadOnlyList<GuestOrderDto>>.Ok(result));
+    }
+
+    [HttpPatch("orders/{id:guid}/status")]
+    public async Task<ActionResult<ApiResponse<GuestOrderDto>>> UpdateOrderStatus(
+        [FromRoute] Guid id,
+        [FromBody] UpdateOrderStatusDto request,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.UpdateOrderStatusAsync(targetId, id, request.Status, cancellationToken);
+        return Ok(ApiResponse<GuestOrderDto>.Ok(result, "Sifariş statusu yeniləndi."));
+    }
+    #endregion
+
+    #region Guest Reviews (5-Star Feedback)
+    [HttpGet("reviews")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<GuestReviewDto>>>> GetReviews(
+        [FromQuery] bool? isResolved,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.GetReviewsAsync(targetId, isResolved, cancellationToken);
+        return Ok(ApiResponse<IReadOnlyList<GuestReviewDto>>.Ok(result));
+    }
+
+    [HttpPatch("reviews/{id:guid}/resolve")]
+    public async Task<ActionResult<ApiResponse<bool>>> ToggleReviewResolved(
+        [FromRoute] Guid id,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var resolved = await _hotelAdminService.ToggleReviewResolvedAsync(targetId, id, cancellationToken);
+        return Ok(ApiResponse<bool>.Ok(resolved, resolved ? "Rəy baxılmış kimi işarələndi." : "Rəy yenidən açıq statusuna qaytarıldı."));
+    }
+    #endregion
+
+    #region Department Contacts
+    [HttpGet("departments")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<DepartmentContactDto>>>> GetDepartmentContacts(
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.GetDepartmentContactsAsync(targetId, cancellationToken);
+        return Ok(ApiResponse<IReadOnlyList<DepartmentContactDto>>.Ok(result));
+    }
+
+    [HttpPost("departments")]
+    public async Task<ActionResult<ApiResponse<DepartmentContactDto>>> CreateDepartmentContact(
+        [FromBody] CreateDepartmentContactDto request,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.CreateDepartmentContactAsync(targetId, request, cancellationToken);
+        return Ok(ApiResponse<DepartmentContactDto>.Ok(result, "Şöbə əlaqəsi əlavə edildi."));
+    }
+
+    [HttpPut("departments/{id:guid}")]
+    public async Task<ActionResult<ApiResponse<DepartmentContactDto>>> UpdateDepartmentContact(
+        [FromRoute] Guid id,
+        [FromBody] UpdateDepartmentContactDto request,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        var result = await _hotelAdminService.UpdateDepartmentContactAsync(targetId, id, request, cancellationToken);
+        return Ok(ApiResponse<DepartmentContactDto>.Ok(result, "Şöbə əlaqəsi yeniləndi."));
+    }
+
+    [HttpDelete("departments/{id:guid}")]
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteDepartmentContact(
+        [FromRoute] Guid id,
+        [FromQuery] Guid? tenantId,
+        CancellationToken cancellationToken)
+    {
+        var targetId = GetTenantId(tenantId);
+        await _hotelAdminService.DeleteDepartmentContactAsync(targetId, id, cancellationToken);
+        return Ok(ApiResponse<bool>.Ok(true, "Şöbə əlaqəsi silindi."));
+    }
+    #endregion
 }
 

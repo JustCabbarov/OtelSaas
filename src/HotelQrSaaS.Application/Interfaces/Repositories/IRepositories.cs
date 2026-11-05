@@ -46,3 +46,9 @@ public interface IAnalyticsRepository : IGenericRepository<AnalyticsEvent>
     Task<Dictionary<string, int>> GetDeviceBreakdownAsync(Guid tenantId, CancellationToken cancellationToken = default);
 }
 
+public interface IGuestOrderRepository : IGenericRepository<GuestOrder>
+{
+    Task<IReadOnlyList<GuestOrder>> GetTenantOrdersAsync(Guid tenantId, OrderStatus? status = null, CancellationToken cancellationToken = default);
+    Task<GuestOrder?> GetOrderWithItemsAsync(Guid orderId, CancellationToken cancellationToken = default);
+}
+

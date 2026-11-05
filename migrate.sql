@@ -1,4 +1,4 @@
-﻿CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
     "MigrationId" character varying(150) NOT NULL,
     "ProductVersion" character varying(32) NOT NULL,
     CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
@@ -306,6 +306,213 @@ CREATE INDEX "IX_HotelActivities_TenantId_Date_IsActive" ON "HotelActivities" ("
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
 VALUES ('20261102185953_AddHotelActivities', '8.0.30');
+
+COMMIT;
+
+START TRANSACTION;
+
+ALTER TABLE "Tenants" ADD COLUMN IF NOT EXISTS "SubtitleAz" character varying(200);
+ALTER TABLE "Tenants" ADD COLUMN IF NOT EXISTS "SubtitleEn" character varying(200);
+ALTER TABLE "Tenants" ADD COLUMN IF NOT EXISTS "SubtitleRu" character varying(200);
+ALTER TABLE "Tenants" ADD COLUMN IF NOT EXISTS "StarRating" integer DEFAULT 5;
+
+CREATE TABLE IF NOT EXISTS "HotelStories" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "TitleAz" character varying(150) NOT NULL,
+    "TitleEn" character varying(150),
+    "TitleRu" character varying(150),
+    "DescriptionAz" text,
+    "DescriptionEn" text,
+    "DescriptionRu" text,
+    "ImageUrl" character varying(500),
+    "BannerImageUrl" character varying(500),
+    "BadgeText" character varying(80),
+    "ActionUrl" character varying(500),
+    "DisplayOrder" integer NOT NULL,
+    "IsActive" boolean NOT NULL,
+    "CreatedAtUtc" timestamp with time zone NOT NULL,
+    "UpdatedAtUtc" timestamp with time zone,
+    "IsDeleted" boolean NOT NULL,
+    "DeletedAtUtc" timestamp with time zone,
+    CONSTRAINT "PK_HotelStories" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_HotelStories_Tenants_TenantId" FOREIGN KEY ("TenantId") REFERENCES "Tenants" ("Id") ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "HotelHubs" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "Code" character varying(50) NOT NULL,
+    "HubType" integer NOT NULL,
+    "KickerAz" character varying(80),
+    "KickerEn" character varying(80),
+    "KickerRu" character varying(80),
+    "TitleAz" character varying(150) NOT NULL,
+    "TitleEn" character varying(150),
+    "TitleRu" character varying(150),
+    "SubtitleAz" text,
+    "SubtitleEn" text,
+    "SubtitleRu" text,
+    "IconKey" character varying(50),
+    "CoverImageUrl" character varying(500),
+    "DisplayOrder" integer NOT NULL,
+    "IsActive" boolean NOT NULL,
+    "CreatedAtUtc" timestamp with time zone NOT NULL,
+    "UpdatedAtUtc" timestamp with time zone,
+    "IsDeleted" boolean NOT NULL,
+    "DeletedAtUtc" timestamp with time zone,
+    CONSTRAINT "PK_HotelHubs" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_HotelHubs_Tenants_TenantId" FOREIGN KEY ("TenantId") REFERENCES "Tenants" ("Id") ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "CatalogCategories" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "HubId" uuid NOT NULL,
+    "ParentCategoryId" uuid,
+    "TitleAz" character varying(200) NOT NULL,
+    "TitleEn" character varying(200),
+    "TitleRu" character varying(200),
+    "SubtitleAz" character varying(300),
+    "SubtitleEn" character varying(300),
+    "SubtitleRu" character varying(300),
+    "ImageUrl" text,
+    "IconKey" text,
+    "WorkingHours" character varying(100),
+    "InternalExtension" character varying(50),
+    "LayoutStyle" character varying(30) NOT NULL,
+    "DisplayOrder" integer NOT NULL,
+    "IsActive" boolean NOT NULL,
+    "CreatedAtUtc" timestamp with time zone NOT NULL,
+    "UpdatedAtUtc" timestamp with time zone,
+    "IsDeleted" boolean NOT NULL,
+    "DeletedAtUtc" timestamp with time zone,
+    CONSTRAINT "PK_CatalogCategories" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_CatalogCategories_Tenants_TenantId" FOREIGN KEY ("TenantId") REFERENCES "Tenants" ("Id") ON DELETE CASCADE,
+    CONSTRAINT "FK_CatalogCategories_HotelHubs_HubId" FOREIGN KEY ("HubId") REFERENCES "HotelHubs" ("Id") ON DELETE CASCADE,
+    CONSTRAINT "FK_CatalogCategories_CatalogCategories_ParentCategoryId" FOREIGN KEY ("ParentCategoryId") REFERENCES "CatalogCategories" ("Id") ON DELETE RESTRICT
+);
+
+CREATE TABLE IF NOT EXISTS "CatalogItems" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "HubId" uuid NOT NULL,
+    "CategoryId" uuid,
+    "ItemType" integer NOT NULL,
+    "TitleAz" character varying(250) NOT NULL,
+    "TitleEn" character varying(250),
+    "TitleRu" character varying(250),
+    "DescriptionAz" text,
+    "DescriptionEn" text,
+    "DescriptionRu" text,
+    "BadgeAz" character varying(100),
+    "BadgeEn" character varying(100),
+    "BadgeRu" character varying(100),
+    "FilterTag" character varying(50),
+    "Price" numeric(18,2),
+    "OldPrice" numeric(18,2),
+    "Currency" character varying(15) NOT NULL,
+    "PortionOrDuration" character varying(100),
+    "BulletPointsAz" text,
+    "BulletPointsEn" text,
+    "BulletPointsRu" text,
+    "ImageUrl" character varying(500),
+    "IsOrderable" boolean NOT NULL,
+    "IsFeaturedInDailySpecials" boolean NOT NULL,
+    "ActionLabelAz" text,
+    "ActionLabelEn" text,
+    "ActionLabelRu" text,
+    "ActionUrl" character varying(500),
+    "DisplayOrder" integer NOT NULL,
+    "IsActive" boolean NOT NULL,
+    "CreatedAtUtc" timestamp with time zone NOT NULL,
+    "UpdatedAtUtc" timestamp with time zone,
+    "IsDeleted" boolean NOT NULL,
+    "DeletedAtUtc" timestamp with time zone,
+    CONSTRAINT "PK_CatalogItems" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_CatalogItems_Tenants_TenantId" FOREIGN KEY ("TenantId") REFERENCES "Tenants" ("Id") ON DELETE CASCADE,
+    CONSTRAINT "FK_CatalogItems_HotelHubs_HubId" FOREIGN KEY ("HubId") REFERENCES "HotelHubs" ("Id") ON DELETE CASCADE,
+    CONSTRAINT "FK_CatalogItems_CatalogCategories_CategoryId" FOREIGN KEY ("CategoryId") REFERENCES "CatalogCategories" ("Id") ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS "GuestOrders" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrderNumber" character varying(50) NOT NULL,
+    "OrderType" integer NOT NULL,
+    "RoomOrTableNumber" character varying(80) NOT NULL,
+    "GuestName" character varying(150) NOT NULL,
+    "PhoneNumber" character varying(50) NOT NULL,
+    "Notes" text,
+    "TotalAmount" numeric(18,2) NOT NULL,
+    "Currency" character varying(15) NOT NULL,
+    "Status" integer NOT NULL,
+    "IsEmailSent" boolean NOT NULL,
+    "IsTelegramSent" boolean NOT NULL,
+    "CreatedAtUtc" timestamp with time zone NOT NULL,
+    "UpdatedAtUtc" timestamp with time zone,
+    CONSTRAINT "PK_GuestOrders" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_GuestOrders_Tenants_TenantId" FOREIGN KEY ("TenantId") REFERENCES "Tenants" ("Id") ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "GuestOrderItems" (
+    "Id" uuid NOT NULL,
+    "OrderId" uuid NOT NULL,
+    "CatalogItemId" uuid,
+    "ItemTitle" character varying(250) NOT NULL,
+    "Quantity" integer NOT NULL,
+    "UnitPrice" numeric(18,2) NOT NULL,
+    "LineTotal" numeric(18,2) NOT NULL,
+    "SpecialInstruction" text,
+    CONSTRAINT "PK_GuestOrderItems" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_GuestOrderItems_GuestOrders_OrderId" FOREIGN KEY ("OrderId") REFERENCES "GuestOrders" ("Id") ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "GuestReviews" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "Rating" integer NOT NULL,
+    "GuestName" character varying(150),
+    "RoomNumber" character varying(50),
+    "PhoneNumber" character varying(50),
+    "Department" character varying(80),
+    "Comment" character varying(2000),
+    "IsResolved" boolean NOT NULL,
+    "IsTelegramAlertSent" boolean NOT NULL,
+    "CreatedAtUtc" timestamp with time zone NOT NULL,
+    "UpdatedAtUtc" timestamp with time zone,
+    CONSTRAINT "PK_GuestReviews" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_GuestReviews_Tenants_TenantId" FOREIGN KEY ("TenantId") REFERENCES "Tenants" ("Id") ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "HotelDepartmentContacts" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "TitleAz" character varying(150) NOT NULL,
+    "TitleEn" character varying(150),
+    "TitleRu" character varying(150),
+    "SubtitleAz" text,
+    "SubtitleEn" text,
+    "SubtitleRu" text,
+    "PhoneNumber" character varying(80),
+    "InternalExtension" character varying(50),
+    "WhatsAppNumber" character varying(80),
+    "Email" character varying(150),
+    "WorkingHours" character varying(100),
+    "IconKey" text,
+    "DisplayOrder" integer NOT NULL,
+    "IsActive" boolean NOT NULL,
+    "CreatedAtUtc" timestamp with time zone NOT NULL,
+    "UpdatedAtUtc" timestamp with time zone,
+    "IsDeleted" boolean NOT NULL,
+    "DeletedAtUtc" timestamp with time zone,
+    CONSTRAINT "PK_HotelDepartmentContacts" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_HotelDepartmentContacts_Tenants_TenantId" FOREIGN KEY ("TenantId") REFERENCES "Tenants" ("Id") ON DELETE CASCADE
+);
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20261105222500_AddSkyhillFullCatalogAndOrdering', '8.0.30')
+ON CONFLICT DO NOTHING;
 
 COMMIT;
 

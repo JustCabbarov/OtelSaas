@@ -25,6 +25,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<AnalyticsEvent> AnalyticsEvents => Set<AnalyticsEvent>();
     public DbSet<QrCodeSetting> QrCodeSettings => Set<QrCodeSetting>();
     public DbSet<HotelActivity> HotelActivities => Set<HotelActivity>();
+    public DbSet<HotelStory> HotelStories => Set<HotelStory>();
+    public DbSet<HotelHub> HotelHubs => Set<HotelHub>();
+    public DbSet<CatalogCategory> CatalogCategories => Set<CatalogCategory>();
+    public DbSet<CatalogItem> CatalogItems => Set<CatalogItem>();
+    public DbSet<GuestOrder> GuestOrders => Set<GuestOrder>();
+    public DbSet<GuestOrderItem> GuestOrderItems => Set<GuestOrderItem>();
+    public DbSet<GuestReview> GuestReviews => Set<GuestReview>();
+    public DbSet<HotelDepartmentContact> HotelDepartmentContacts => Set<HotelDepartmentContact>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
