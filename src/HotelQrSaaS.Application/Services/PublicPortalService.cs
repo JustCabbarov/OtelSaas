@@ -1087,11 +1087,11 @@ public class PublicPortalService : IPublicPortalService
                 : $"https://{tenant.CustomDomain}";
         }
 
-        // 3. Konfiqurasiyadakı Frontend BaseUrl
+        // 3. Konfiqurasiyadakı Frontend BaseUrl (məs: https://modi.altensor.com/hotel/{slug})
         var frontendBaseUrl = _configuration["FrontendSettings:BaseUrl"];
         if (!string.IsNullOrWhiteSpace(frontendBaseUrl))
         {
-            return $"{frontendBaseUrl.TrimEnd('/')}/{tenant.Slug}";
+            return $"{frontendBaseUrl.TrimEnd('/')}/hotel/{tenant.Slug}";
         }
 
         // 4. Default olaraq public API səhifəsi
@@ -1133,15 +1133,19 @@ public class PublicPortalService : IPublicPortalService
     {
         var directLink = _configuration.GetValue<bool>("FrontendSettings:DirectQrLink");
         var frontendBaseUrl = _configuration["FrontendSettings:BaseUrl"];
+        var apiBaseUrl = _configuration["FrontendSettings:ApiBaseUrl"];
 
         // Əgər birbaşa frontend linki tələb olunubsa və təyin edilibsə
         if (directLink && !string.IsNullOrWhiteSpace(frontendBaseUrl))
         {
-            return $"{frontendBaseUrl.TrimEnd('/')}/{tenant.Slug}";
+            return $"{frontendBaseUrl.TrimEnd('/')}/hotel/{tenant.Slug}";
         }
 
+        // Əgər rəsmi API domeni təyin edilibsə (məs: https://api-modi.altensor.com), IP yerinə domen istifadə olunur
+        var effectiveBaseUrl = !string.IsNullOrWhiteSpace(apiBaseUrl) ? apiBaseUrl.TrimEnd('/') : baseUrl.TrimEnd('/');
+
         // Dinamik və analitika toplayan yönləndirmə linki (/q/{slug})
-        return $"{baseUrl.TrimEnd('/')}/q/{tenant.Slug}";
+        return $"{effectiveBaseUrl}/q/{tenant.Slug}";
     }
 
     private async Task RecordAnalyticsAsync(

@@ -1236,13 +1236,15 @@ public class HotelAdminService : IHotelAdminService
     {
         var directLink = _configuration.GetValue<bool>("FrontendSettings:DirectQrLink");
         var frontendBaseUrl = _configuration["FrontendSettings:BaseUrl"];
+        var apiBaseUrl = _configuration["FrontendSettings:ApiBaseUrl"];
 
         if (directLink && !string.IsNullOrWhiteSpace(frontendBaseUrl))
         {
-            return $"{frontendBaseUrl.TrimEnd('/')}/{tenant.Slug}";
+            return $"{frontendBaseUrl.TrimEnd('/')}/hotel/{tenant.Slug}";
         }
 
-        return $"{baseUrl.TrimEnd('/')}/q/{tenant.Slug}";
+        var effectiveBaseUrl = !string.IsNullOrWhiteSpace(apiBaseUrl) ? apiBaseUrl.TrimEnd('/') : baseUrl.TrimEnd('/');
+        return $"{effectiveBaseUrl}/q/{tenant.Slug}";
     }
 
     public async Task<AnalyticsSummaryDto> GetAnalyticsSummaryAsync(Guid tenantId, CancellationToken cancellationToken = default)
