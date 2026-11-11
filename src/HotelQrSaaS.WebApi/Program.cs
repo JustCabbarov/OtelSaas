@@ -193,19 +193,9 @@ app.UseSwaggerUI(c =>
 
 app.UseCors("AllowAll");
 
-// Serve default index.html and static uploaded files (wwwroot) with explicit MIME types (.webp, .webmanifest, .mp4, etc.)
-var contentTypeProvider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
-contentTypeProvider.Mappings[".webp"] = "image/webp";
-contentTypeProvider.Mappings[".webmanifest"] = "application/manifest+json";
-contentTypeProvider.Mappings[".mp4"] = "video/mp4";
-contentTypeProvider.Mappings[".webm"] = "video/webm";
-contentTypeProvider.Mappings[".m4v"] = "video/mp4";
-
+// Serve default index.html and static uploaded files (wwwroot)
 app.UseDefaultFiles();
-app.UseStaticFiles(new StaticFileOptions
-{
-    ContentTypeProvider = contentTypeProvider
-});
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();

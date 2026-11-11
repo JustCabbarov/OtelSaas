@@ -456,24 +456,6 @@ public static class DatabaseSeeder
                 }
             }
 
-            const string altensorAdminEmail = "admin@altensor.com";
-            if (await userManager.FindByEmailAsync(altensorAdminEmail) == null)
-            {
-                var altensorAdmin = new ApplicationUser
-                {
-                    Id = Guid.NewGuid(),
-                    UserName = altensorAdminEmail,
-                    Email = altensorAdminEmail,
-                    FullName = "Altensor Hotel Admin",
-                    EmailConfirmed = true,
-                    TenantId = skyhillTenant.Id
-                };
-                if ((await userManager.CreateAsync(altensorAdmin, "Hotel123!")).Succeeded)
-                {
-                    await userManager.AddToRoleAsync(altensorAdmin, "HotelAdmin");
-                }
-            }
-
             await context.SaveChangesAsync();
             existingTenants.Add(skyhillTenant);
         }
